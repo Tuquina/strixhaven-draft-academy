@@ -1,5 +1,6 @@
 import type { Tournament } from "../../types";
 import { STATUS_LABELS } from "../../lib/format";
+import { GRADIENT_TEXT_GOLD } from "../../lib/gradients";
 import { Button } from "../shared/Button";
 
 interface TournamentHeaderProps {
@@ -28,7 +29,7 @@ export function TournamentHeader({
             ← Volver
           </button>
           <div className="min-w-0">
-            <h1 className="text-gradient-gold m-0 overflow-hidden font-heading-decorative text-[clamp(16px,3vw,22px)] font-bold text-ellipsis whitespace-nowrap">
+            <h1 className={`${GRADIENT_TEXT_GOLD} m-0 overflow-hidden font-heading-decorative text-[clamp(16px,3vw,22px)] font-bold text-ellipsis whitespace-nowrap`}>
               {tournament.name}
             </h1>
             <div className="mt-1 flex flex-wrap items-center gap-2.5 font-sans text-xs text-parchment/45">

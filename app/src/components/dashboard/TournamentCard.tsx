@@ -1,6 +1,7 @@
 import type { Tournament } from "../../types";
 import { StatusBadge } from "../shared/StatusBadge";
 import { Button } from "../shared/Button";
+import { GRADIENT_TEXT_GOLD } from "../../lib/gradients";
 
 const BORDER_CLASSES: Record<Tournament["status"], string> = {
   active: "border-success/25",
@@ -35,7 +36,7 @@ export function TournamentCard({
       className={`animate-fade-in rounded-xl border bg-background-panel/85 p-6 backdrop-blur-sm ${BORDER_CLASSES[tournament.status]}`}
     >
       <div className="mb-3 flex items-start justify-between gap-2">
-        <h3 className="text-gradient-gold m-0 font-heading-decorative text-xl font-bold leading-tight">
+        <h3 className={`${GRADIENT_TEXT_GOLD} m-0 font-heading-decorative text-xl font-bold leading-tight`}>
           {tournament.name}
         </h3>
         <StatusBadge status={tournament.status} />

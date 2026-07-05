@@ -216,31 +216,3 @@ textarea:focus {
   background: rgba(200, 155, 60, 0.3);
   border-radius: 3px;
 }
-
-/* Shared decorative-title gradients — same visual language as the
-   dashboard hero title, tinted per context. */
-.text-gradient-hero,
-.text-gradient-success,
-.text-gradient-violet,
-.text-gradient-gold {
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-.text-gradient-hero {
-  background: linear-gradient(180deg, #e8d44d 0%, #8cc63f 35%, #3ea33e 70%, #2d7a2e 100%);
-}
-
-.text-gradient-success {
-  background: linear-gradient(180deg, #baf7a0 0%, #4ade80 55%, #22c55e 100%);
-}
-
-.text-gradient-violet {
-  background: linear-gradient(180deg, #e4d1ff 0%, #b18aff 55%, #7c3aed 100%);
-}
-
-.text-gradient-gold {
-  background: linear-gradient(180deg, #f5ecd8 0%, #e9d8b4 45%, #c89b3c 100%);
-}

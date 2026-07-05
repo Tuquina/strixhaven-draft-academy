@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { GRADIENT_TEXT_GOLD } from "../../lib/gradients";
 
 interface EmptyStateProps {
   icon?: ReactNode;
@@ -23,7 +24,7 @@ export function EmptyState({ icon, title, subtitle, compact }: EmptyStateProps) 
           {icon}
         </div>
       )}
-      <p className="text-gradient-gold m-0 mb-2 font-heading-decorative text-2xl font-bold">
+      <p className={`${GRADIENT_TEXT_GOLD} m-0 mb-2 font-heading-decorative text-2xl font-bold`}>
         {title}
       </p>
       {subtitle && (

@@ -1,4 +1,5 @@
 import { FAN_CONTENT_NOTICE } from "../../lib/legal";
+import { GRADIENT_TEXT_GOLD, GRADIENT_TEXT_HERO } from "../../lib/gradients";
 
 interface RulesPageProps {
   onBack: () => void;
@@ -51,7 +52,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
           >
             ← Volver
           </button>
-          <h1 className="text-gradient-gold m-0 font-heading-decorative text-[clamp(16px,3vw,22px)] font-bold">
+          <h1 className={`${GRADIENT_TEXT_GOLD} m-0 font-heading-decorative text-[clamp(16px,3vw,22px)] font-bold`}>
             Reglas del Draft
           </h1>
         </div>
@@ -62,7 +63,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
           <div className="mb-3 font-sans text-xs tracking-[6px] text-gold/60 uppercase">
             ✦ Cómo se juega ✦
           </div>
-          <h2 className="text-gradient-hero m-0 font-heading-decorative text-[clamp(28px,5vw,40px)] font-black animate-[heroTitleGlow_4s_ease-in-out_infinite]">
+          <h2 className={`${GRADIENT_TEXT_HERO} m-0 font-heading-decorative text-[clamp(28px,5vw,40px)] font-black animate-[heroTitleGlow_4s_ease-in-out_infinite]`}>
             Booster Draft
           </h2>
         </div>
@@ -73,7 +74,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
               key={section.title}
               className="rounded-xl border border-gold/12 bg-arcane-violet/8 p-6 backdrop-blur-sm"
             >
-              <h3 className="text-gradient-gold m-0 mb-2 font-heading-decorative text-lg font-bold">
+              <h3 className={`${GRADIENT_TEXT_GOLD} m-0 mb-2 font-heading-decorative text-lg font-bold`}>
                 {section.title}
               </h3>
               <p className="m-0 font-body text-[15px] leading-relaxed text-parchment/70">

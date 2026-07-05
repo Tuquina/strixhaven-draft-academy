@@ -3,6 +3,7 @@ import type { Tournament } from "../../types";
 import type { CreateTournamentInput, SyncStatus } from "../../hooks/useTournaments";
 import { calculateStandings } from "../../lib/standings";
 import { FAN_CONTENT_NOTICE } from "../../lib/legal";
+import { GRADIENT_TEXT_GOLD, GRADIENT_TEXT_HERO, GRADIENT_TEXT_SUCCESS, GRADIENT_TEXT_VIOLET } from "../../lib/gradients";
 import { TournamentCard } from "./TournamentCard";
 import { CreateTournamentModal } from "./CreateTournamentModal";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
@@ -37,9 +38,9 @@ const SECTIONS: {
   dotClass: string;
   titleGradient: string;
 }[] = [
-  { status: "active", title: "Torneos activos", dotClass: "bg-success", titleGradient: "text-gradient-success" },
-  { status: "drafting", title: "Torneos en preparación", dotClass: "bg-arcane-violet", titleGradient: "text-gradient-violet" },
-  { status: "finished", title: "Torneos finalizados", dotClass: "bg-gold", titleGradient: "text-gradient-gold" },
+  { status: "active", title: "Torneos activos", dotClass: "bg-success", titleGradient: GRADIENT_TEXT_SUCCESS },
+  { status: "drafting", title: "Torneos en preparación", dotClass: "bg-arcane-violet", titleGradient: GRADIENT_TEXT_VIOLET },
+  { status: "finished", title: "Torneos finalizados", dotClass: "bg-gold", titleGradient: GRADIENT_TEXT_GOLD },
 ];
 
 export function TournamentDashboard({
@@ -79,7 +80,7 @@ export function TournamentDashboard({
         <div className="mb-4 font-sans text-[13px] font-semibold tracking-[4px] text-gold uppercase [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">
           ✦ Organizador Casual de Torneos Draft ✦
         </div>
-        <h1 className="text-gradient-hero m-0 font-heading-decorative text-[clamp(32px,6vw,56px)] leading-[1.15] font-black tracking-wide animate-[heroTitleGlow_4s_ease-in-out_infinite]">
+        <h1 className={`${GRADIENT_TEXT_HERO} m-0 font-heading-decorative text-[clamp(32px,6vw,56px)] leading-[1.15] font-black tracking-wide animate-[heroTitleGlow_4s_ease-in-out_infinite]`}>
           Strixhaven Draft Academy
         </h1>
         <div className="mx-auto my-5 h-0.5 w-15 bg-gradient-to-r from-transparent via-[#5cb338] to-transparent" />
@@ -124,7 +125,7 @@ export function TournamentDashboard({
           if (list.length === 0) return null;
           return (
             <div key={section.status} className="mb-8">
-              <h2 className={`m-0 mb-4 flex items-center gap-2 font-heading-decorative text-base font-bold tracking-[2px] uppercase ${section.titleGradient}`}>
+              <h2 className={`${section.titleGradient} m-0 mb-4 flex items-center gap-2 font-heading-decorative text-base font-bold tracking-[2px] uppercase`}>
                 <span className={`inline-block h-2 w-2 rounded-full ${section.dotClass}`} />
                 {section.title}
               </h2>
