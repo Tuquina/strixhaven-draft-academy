@@ -80,7 +80,7 @@ this private, free, non-commercial fan project) explicitly opted into this. That
   footer of every page — don't reword or drop it.
 - Any copyright/artist notices baked into an incorporated asset (e.g. the watermark in the
   background image) must not be cropped out or edited away.
-- Don't add official Wizards logos/trademarks (Magic logo, Planeswalker symbol, real mana
-  symbols, product wordmarks like "Secrets of Strixhaven") as UI elements — those need separate
+- Don't add official Wizards logos (Magic logo, Planeswalker symbol, real mana
+  symbols) as UI elements — those need separate
   written permission the policy doesn't grant. The app's mana-color badges are original,
   custom-drawn UI, not the official symbols — keep it that way.

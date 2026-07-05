@@ -7,7 +7,6 @@ import { TournamentCard } from "./TournamentCard";
 import { CreateTournamentModal } from "./CreateTournamentModal";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
 import { EmptyState } from "../shared/EmptyState";
-import { Button } from "../shared/Button";
 
 interface TournamentDashboardProps {
   tournaments: Tournament[];
@@ -69,34 +68,46 @@ export function TournamentDashboard({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="bg-gradient-to-b from-background-panel/80 to-transparent px-5 pt-15 pb-10 text-center">
-        <div className="mb-4 font-sans text-xs tracking-[6px] text-gold/60 uppercase">
-          ✦ Organizador casual de torneos Draft ✦
+      <button
+        onClick={onShowRules}
+        className="fixed top-5 left-5 z-40 cursor-pointer rounded-md border border-[#f0e6d0]/12 bg-[#f0e6d0]/8 px-5 py-3 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0]/60 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f0e6d0]/30 hover:bg-[#f0e6d0]/12 hover:text-[#f0e6d0]"
+      >
+        📋 Reglas del Draft
+      </button>
+
+      <header className="relative px-5 pt-15 pb-10 text-center">
+        <div className="mb-4 font-sans text-[13px] font-semibold tracking-[4px] text-gold uppercase [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">
+          ✦ Organizador Casual de Torneos Draft ✦
         </div>
-        <h1 className="m-0 font-heading text-[clamp(32px,6vw,52px)] leading-[1.1] font-extrabold tracking-wide text-parchment [text-shadow:0_2px_20px_rgba(200,155,60,0.3)]">
+        <h1 className="m-0 bg-[linear-gradient(180deg,#e8d44d_0%,#8cc63f_35%,#3ea33e_70%,#2d7a2e_100%)] bg-clip-text font-heading-decorative text-[clamp(32px,6vw,56px)] leading-[1.15] font-black tracking-wide text-transparent animate-[heroTitleGlow_4s_ease-in-out_infinite]">
           Strixhaven Draft Academy
         </h1>
-        <div className="mx-auto my-5 h-0.5 w-20 bg-gradient-to-r from-transparent via-gold to-transparent" />
-        <p className="m-0 font-body text-base text-parchment/60">
+        <div className="mx-auto my-5 h-0.5 w-15 bg-gradient-to-r from-transparent via-[#5cb338] to-transparent" />
+        <p className="m-0 font-garamond text-xl font-semibold text-parchment/85 [text-shadow:0_1px_6px_rgba(0,0,0,0.7)]">
           Hosted by Fernando Tuquina
         </p>
-        <div className="mt-3 flex items-center justify-center gap-2 font-sans text-[11px] text-parchment/35">
-          <span className={`inline-block h-1.5 w-1.5 rounded-full ${SYNC_STATUS_INFO[syncStatus].dotClass}`} />
-          {SYNC_STATUS_INFO[syncStatus].label}
+        <div className="mt-2 flex items-center justify-center gap-2">
+          <span className={`h-2 w-2 rounded-full shadow-[0_0_8px_rgba(74,222,128,0.6)] ${SYNC_STATUS_INFO[syncStatus].dotClass}`} />
+          <span className="font-garamond text-[15px] text-parchment/55 [text-shadow:0_1px_4px_rgba(0,0,0,0.6)]">
+            {SYNC_STATUS_INFO[syncStatus].label}
+          </span>
         </div>
       </header>
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 pb-15">
-        <div className="mb-8 flex flex-wrap gap-3">
-          <Button variant="primary" className="px-7 py-3.5 font-heading text-[15px] tracking-wide" onClick={() => setShowCreateModal(true)}>
-            ✦ Crear nuevo torneo
-          </Button>
-          <Button variant="secondary" className="px-5 py-3.5 text-sm" onClick={handleImportClick}>
+        <div className="mb-8 flex flex-wrap justify-center gap-4">
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="cursor-pointer rounded-md border-2 border-gold/60 bg-[linear-gradient(135deg,#d4af37,#b8960c)] px-8 py-3.5 font-heading text-sm font-bold tracking-[1.5px] text-[#1a1535] uppercase shadow-[0_4px_20px_rgba(212,175,55,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_30px_rgba(212,175,55,0.45)]"
+          >
+            ✦ Crear Nuevo Torneo
+          </button>
+          <button
+            onClick={handleImportClick}
+            className="cursor-pointer rounded-md border border-gold/25 bg-[#f0e6d0]/8 px-7 py-3.5 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/50 hover:bg-[#f0e6d0]/15"
+          >
             Importar JSON
-          </Button>
-          <Button variant="ghost" className="px-5 py-3.5 text-sm" onClick={onShowRules}>
-            📖 Reglas del draft
-          </Button>
+          </button>
           <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleFileChange} />
         </div>
 

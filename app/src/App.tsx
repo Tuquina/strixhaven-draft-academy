@@ -5,6 +5,7 @@ import { TournamentDashboard } from "./components/dashboard/TournamentDashboard"
 import { TournamentDetailPage } from "./components/tournament/TournamentDetailPage";
 import { RulesPage } from "./components/rules/RulesPage";
 import { Notification } from "./components/shared/Notification";
+import { FloatingOrbs } from "./components/shared/FloatingOrbs";
 
 function App() {
   const {
@@ -32,6 +33,7 @@ function App() {
   return (
     <div className="relative min-h-screen font-body text-parchment">
       <div className="app-backdrop" aria-hidden="true" />
+      <FloatingOrbs />
       <Notification message={message} />
 
       {showRules && <RulesPage onBack={() => setShowRules(false)} />}
