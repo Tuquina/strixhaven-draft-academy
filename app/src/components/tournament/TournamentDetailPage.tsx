@@ -12,6 +12,7 @@ import { StandingsTable } from "./StandingsTable";
 import { ResultModal } from "./ResultModal";
 import { FinalizeTournamentModal } from "./FinalizeTournamentModal";
 import { Confetti } from "../shared/Confetti";
+import { MatchTimerModal } from "../shared/MatchTimerModal";
 
 type MobileTab = "players" | "rounds" | "standings";
 
@@ -51,6 +52,7 @@ export function TournamentDetailPage({
   const [showFinalizeModal, setShowFinalizeModal] = useState(false);
   const [resultModalMatchId, setResultModalMatchId] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showTimerModal, setShowTimerModal] = useState(false);
 
   const hasResults = tournament.rounds.some((r) =>
     r.matches.some((m) => m.status === "completed")
@@ -95,6 +97,7 @@ export function TournamentDetailPage({
           onExport();
           notify("Torneo exportado");
         }}
+        onOpenTimer={() => setShowTimerModal(true)}
       />
 
       {podium.length > 0 && <PodiumSummary podium={podium} />}
@@ -185,6 +188,8 @@ export function TournamentDetailPage({
       )}
 
       <Confetti active={showConfetti} />
+
+      {showTimerModal && <MatchTimerModal onClose={() => setShowTimerModal(false)} />}
     </div>
   );
 }

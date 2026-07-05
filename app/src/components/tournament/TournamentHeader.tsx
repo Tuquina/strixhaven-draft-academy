@@ -9,6 +9,7 @@ interface TournamentHeaderProps {
   onFinalize: () => void;
   onReopen: () => void;
   onExport: () => void;
+  onOpenTimer: () => void;
 }
 
 export function TournamentHeader({
@@ -17,6 +18,7 @@ export function TournamentHeader({
   onFinalize,
   onReopen,
   onExport,
+  onOpenTimer,
 }: TournamentHeaderProps) {
   return (
     <header className="sticky top-0 z-[100] border-b border-gold/10 bg-background-panel/70 px-6 py-4 backdrop-blur-md">
@@ -52,6 +54,9 @@ export function TournamentHeader({
               Reabrir torneo
             </Button>
           )}
+          <Button variant="ghost" className="border-white/8 px-3 py-2.5 text-xs" onClick={onOpenTimer}>
+            ⏱ Temporizador
+          </Button>
           <Button variant="ghost" className="border-white/8 px-3 py-2.5 text-xs" onClick={onExport}>
             Exportar
           </Button>

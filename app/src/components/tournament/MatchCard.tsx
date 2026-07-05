@@ -1,4 +1,6 @@
+import { useState } from "react";
 import type { MatchDisplay } from "../../lib/rounds";
+import { MatchTimerModal } from "../shared/MatchTimerModal";
 
 interface MatchCardProps {
   match: MatchDisplay;
@@ -7,6 +9,8 @@ interface MatchCardProps {
 }
 
 export function MatchCard({ match, canEdit, onOpenResult }: MatchCardProps) {
+  const [showTimer, setShowTimer] = useState(false);
+
   if (match.isBye) {
     return (
       <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-md bg-black/12 px-3 py-2.5">
@@ -25,6 +29,13 @@ export function MatchCard({ match, canEdit, onOpenResult }: MatchCardProps) {
         <span className="font-body text-sm font-semibold text-parchment">{match.playerBName}</span>
       </div>
       <div className="flex shrink-0 items-center gap-1.5">
+        <button
+          onClick={() => setShowTimer(true)}
+          title="Temporizador de partida"
+          className="cursor-pointer rounded border border-gold/15 bg-transparent px-2 py-1 font-sans text-xs text-gold/70 hover:bg-gold/8 hover:text-gold"
+        >
+          ⏱
+        </button>
         {match.isCompleted && (
           <>
             <span className="font-sans text-xs font-semibold text-success">{match.resultText}</span>
@@ -47,6 +58,14 @@ export function MatchCard({ match, canEdit, onOpenResult }: MatchCardProps) {
           </button>
         )}
       </div>
+
+      {showTimer && (
+        <MatchTimerModal
+          playerAName={match.playerAName}
+          playerBName={match.playerBName}
+          onClose={() => setShowTimer(false)}
+        />
+      )}
     </div>
   );
 }

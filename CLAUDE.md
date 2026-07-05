@@ -36,6 +36,10 @@ read-only unless the user explicitly asks to update the design bundle itself.
   (generic UI primitives).
 - Scheduling/standings/color logic is isolated in `src/lib/` (`rounds.ts`, `schedule.ts`,
   `standings.ts`, `colors.ts`) — keep pairing/scoring logic there, not in components.
+- `src/components/shared/MatchTimerModal.tsx` (match countdown + optional chess-clock per-player
+  timers, opened per-match from `MatchCard` or generally from `TournamentHeader`) is deliberately
+  session-only local state — it's a live utility clock, not tournament data, so it isn't part of
+  `Tournament`/`localStorage`/Supabase and resets on refresh.
 
 ### Cloud sync (Supabase)
 
