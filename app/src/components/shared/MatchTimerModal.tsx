@@ -124,6 +124,15 @@ export function MatchTimerModal({
   const switchTo = (player: "A" | "B") => {
     if (matchDone) return;
     stopAlarm();
+    // In "both" mode the player clock is a per-turn cap, not a shared bank —
+    // it resets to the full allowance every time a new turn starts for them.
+    // In "chess" mode it keeps depleting across the whole match, like a real
+    // chess clock.
+    if (mode === "both") {
+      const freshSeconds = playerMinutes * 60;
+      if (player === "A") setPlayerASeconds(freshSeconds);
+      else setPlayerBSeconds(freshSeconds);
+    }
     setActivePlayer(player);
     setIsPaused(false);
   };
