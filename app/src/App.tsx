@@ -4,6 +4,7 @@ import { useNotification } from "./hooks/useNotification";
 import { TournamentDashboard } from "./components/dashboard/TournamentDashboard";
 import { TournamentDetailPage } from "./components/tournament/TournamentDetailPage";
 import { RulesPage } from "./components/rules/RulesPage";
+import { RulebookPage } from "./components/rules/RulebookPage";
 import { Notification } from "./components/shared/Notification";
 import { FloatingOrbs } from "./components/shared/FloatingOrbs";
 
@@ -25,6 +26,7 @@ function App() {
   const { message, notify } = useNotification();
   const [currentTournamentId, setCurrentTournamentId] = useState<string | null>(null);
   const [showRules, setShowRules] = useState(false);
+  const [showRulebook, setShowRulebook] = useState(false);
 
   const currentTournament = currentTournamentId
     ? tournaments.find((t) => t.id === currentTournamentId) ?? null
@@ -37,8 +39,9 @@ function App() {
       <Notification message={message} />
 
       {showRules && <RulesPage onBack={() => setShowRules(false)} />}
+      {showRulebook && <RulebookPage onBack={() => setShowRulebook(false)} />}
 
-      {!showRules && !currentTournament && (
+      {!showRules && !showRulebook && !currentTournament && (
         <TournamentDashboard
           tournaments={tournaments}
           syncStatus={syncStatus}
@@ -50,11 +53,12 @@ function App() {
           }}
           onImportTournament={importTournament}
           onShowRules={() => setShowRules(true)}
+          onShowRulebook={() => setShowRulebook(true)}
           notify={notify}
         />
       )}
 
-      {!showRules && currentTournament && (
+      {!showRules && !showRulebook && currentTournament && (
         <TournamentDetailPage
           tournament={currentTournament}
           onBack={() => setCurrentTournamentId(null)}

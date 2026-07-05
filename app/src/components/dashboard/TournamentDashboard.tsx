@@ -18,6 +18,7 @@ interface TournamentDashboardProps {
   onDeleteTournament: (id: string) => void;
   onImportTournament: (file: File) => Promise<boolean>;
   onShowRules: () => void;
+  onShowRulebook: () => void;
   notify: (text: string) => void;
 }
 
@@ -52,6 +53,7 @@ export function TournamentDashboard({
   onDeleteTournament,
   onImportTournament,
   onShowRules,
+  onShowRulebook,
   notify,
 }: TournamentDashboardProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -76,6 +78,13 @@ export function TournamentDashboard({
         className="fixed top-5 left-5 z-40 cursor-pointer rounded-md border border-[#f0e6d0]/12 bg-[#f0e6d0]/8 px-5 py-3 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0]/60 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f0e6d0]/30 hover:bg-[#f0e6d0]/12 hover:text-[#f0e6d0]"
       >
         📋 Reglas del Draft
+      </button>
+
+      <button
+        onClick={onShowRulebook}
+        className="fixed top-5 right-5 z-40 cursor-pointer rounded-md border border-[#f0e6d0]/12 bg-[#f0e6d0]/8 px-5 py-3 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0]/60 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f0e6d0]/30 hover:bg-[#f0e6d0]/12 hover:text-[#f0e6d0]"
+      >
+        📘 Manual de Magic
       </button>
 
       <header className="relative px-5 pt-15 pb-10 text-center">

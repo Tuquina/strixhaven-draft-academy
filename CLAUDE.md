@@ -73,10 +73,12 @@ npm run preview      # preview production build
 - Match the visual language already established (parchment/ink/arcane academy theme) — see
   `project/Strixhaven Draft Academy.dc.html` and `src/index.css` for the design tokens.
 
-### Use of official Wizards of the Coast artwork
+### Use of official Wizards of the Coast artwork/documents
 
 The app's background (`public/backgrounds/strixhaven-academy.jpg`) is official Wizards of the
-Coast concept art, used under their
+Coast concept art, and `public/rules/magic-guia-inicio-rapido.pdf` is the official Magic: The
+Gathering Quick Start Guide (embedded read-only in `RulebookPage.tsx` via `<iframe>`), both used
+under Wizards'
 [Fan Content Policy](https://company.wizards.com/es/legal/fancontentpolicy) — the user (host of
 this private, free, non-commercial fan project) explicitly opted into this. That policy requires:
 - The app stays free with no paywall, subscription, or ad/payment gate of any kind.
