@@ -1,3 +1,5 @@
+import { FAN_CONTENT_NOTICE } from "../../lib/legal";
+
 interface RulesPageProps {
   onBack: () => void;
 }
@@ -69,7 +71,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
           {SECTIONS.map((section) => (
             <section
               key={section.title}
-              className="rounded-xl border border-gold/12 bg-arcane-violet/4 p-6"
+              className="rounded-xl border border-gold/12 bg-arcane-violet/8 p-6 backdrop-blur-sm"
             >
               <h3 className="m-0 mb-2 font-heading text-lg font-bold text-gold">
                 {section.title}
@@ -85,7 +87,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
           href={OFFICIAL_RULES_URL}
           target="_blank"
           rel="noreferrer"
-          className="mt-8 flex items-center justify-between gap-3 rounded-xl border border-gold/25 bg-gold/8 p-5 no-underline transition-colors hover:bg-gold/12"
+          className="mt-8 flex items-center justify-between gap-3 rounded-xl border border-gold/25 bg-gold/10 p-5 no-underline backdrop-blur-sm transition-colors hover:bg-gold/16"
         >
           <div>
             <div className="font-sans text-[11px] font-bold tracking-[2px] text-gold uppercase">
@@ -99,9 +101,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
           <span className="shrink-0 font-heading text-xl text-gold">↗</span>
         </a>
 
-        <p className="mt-6 text-center font-sans text-xs text-parchment/25">
-          Fan-made casual tournament tracker. Not affiliated with Wizards of the Coast.
-        </p>
+        <p className="mt-6 text-center font-sans text-xs text-parchment/25">{FAN_CONTENT_NOTICE}</p>
       </main>
     </div>
   );

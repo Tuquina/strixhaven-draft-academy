@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import type { Tournament } from "../../types";
 import type { CreateTournamentInput, SyncStatus } from "../../hooks/useTournaments";
 import { calculateStandings } from "../../lib/standings";
+import { FAN_CONTENT_NOTICE } from "../../lib/legal";
 import { TournamentCard } from "./TournamentCard";
 import { CreateTournamentModal } from "./CreateTournamentModal";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
@@ -134,7 +135,7 @@ export function TournamentDashboard({
           );
         })}
 
-        <div className="mt-10 rounded-xl border border-arcane-violet/12 bg-arcane-violet/4 p-6">
+        <div className="mt-10 rounded-xl border border-arcane-violet/12 bg-arcane-violet/8 p-6 backdrop-blur-sm">
           <h3 className="m-0 mb-3 font-sans text-[13px] font-bold tracking-[2px] text-arcane-violet uppercase">
             Tips para el draft
           </h3>
@@ -149,9 +150,7 @@ export function TournamentDashboard({
       </main>
 
       <footer className="border-t border-gold/8 px-5 py-8 text-center">
-        <p className="m-0 font-sans text-xs text-parchment/25">
-          Fan-made casual tournament tracker. Not affiliated with Wizards of the Coast.
-        </p>
+        <p className="m-0 font-sans text-xs text-parchment/25">{FAN_CONTENT_NOTICE}</p>
       </footer>
 
       {showCreateModal && (

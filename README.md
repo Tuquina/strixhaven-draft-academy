@@ -5,7 +5,10 @@ private group of friends, themed around Strixhaven. It handles player registrati
 color tracking (with Strixhaven college detection), automatic round-robin pairing, result
 entry, live standings, and tournament finalization with a final podium.
 
-Hosted by Fernando Tuquina. Fan-made project, not affiliated with Wizards of the Coast.
+Hosted by Fernando Tuquina. Strixhaven Draft Academy is unofficial fan content permitted under
+Wizards of the Coast's [Fan Content Policy](https://company.wizards.com/es/legal/fancontentpolicy);
+it is not approved or endorsed by Wizards. Some materials used are property of Wizards of the
+Coast. ©Wizards of the Coast LLC.
 
 ## Repository structure
 

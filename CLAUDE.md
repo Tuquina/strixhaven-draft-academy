@@ -68,5 +68,19 @@ npm run preview      # preview production build
 - Keep all user-facing strings in Spanish; identifiers, comments, and commit messages in English.
 - Match the visual language already established (parchment/ink/arcane academy theme) — see
   `project/Strixhaven Draft Academy.dc.html` and `src/index.css` for the design tokens.
-- Don't copy official Magic: The Gathering artwork, logos, or card frames — original/abstract
-  fantasy-academy visuals only.
+
+### Use of official Wizards of the Coast artwork
+
+The app's background (`public/backgrounds/strixhaven-academy.jpg`) is official Wizards of the
+Coast concept art, used under their
+[Fan Content Policy](https://company.wizards.com/es/legal/fancontentpolicy) — the user (host of
+this private, free, non-commercial fan project) explicitly opted into this. That policy requires:
+- The app stays free with no paywall, subscription, or ad/payment gate of any kind.
+- The exact attribution notice in `src/lib/legal.ts` (`FAN_CONTENT_NOTICE`) stays visible in the
+  footer of every page — don't reword or drop it.
+- Any copyright/artist notices baked into an incorporated asset (e.g. the watermark in the
+  background image) must not be cropped out or edited away.
+- Don't add official Wizards logos/trademarks (Magic logo, Planeswalker symbol, real mana
+  symbols, product wordmarks like "Secrets of Strixhaven") as UI elements — those need separate
+  written permission the policy doesn't grant. The app's mana-color badges are original,
+  custom-drawn UI, not the official symbols — keep it that way.

@@ -100,10 +100,25 @@
 
 body {
   margin: 0;
-  background: #101522;
+  min-height: 100vh;
+  background-color: #101522;
   overflow-x: hidden;
   font-family: var(--font-body);
   color: var(--color-parchment);
+}
+
+/* Strixhaven academy backdrop, used under the Fan Content Policy — see
+   src/lib/legal.ts and public/backgrounds/ for the required attribution. */
+.app-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(180deg, rgba(9, 13, 22, 0.55) 0%, rgba(9, 13, 22, 0.8) 55%, rgba(9, 13, 22, 0.95) 100%),
+    url("/backgrounds/strixhaven-academy.jpg");
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
 }
 
 * {

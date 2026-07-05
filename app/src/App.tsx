@@ -31,6 +31,7 @@ function App() {
 
   return (
     <div className="relative min-h-screen font-body text-parchment">
+      <div className="app-backdrop" aria-hidden="true" />
       <Notification message={message} />
 
       {showRules && <RulesPage onBack={() => setShowRules(false)} />}

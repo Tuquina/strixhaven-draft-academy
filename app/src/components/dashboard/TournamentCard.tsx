@@ -32,7 +32,7 @@ export function TournamentCard({
 
   return (
     <div
-      className={`animate-fade-in rounded-xl border bg-background-panel p-6 ${BORDER_CLASSES[tournament.status]}`}
+      className={`animate-fade-in rounded-xl border bg-background-panel/85 p-6 backdrop-blur-sm ${BORDER_CLASSES[tournament.status]}`}
     >
       <div className="mb-3 flex items-start justify-between gap-2">
         <h3 className="m-0 font-heading text-xl font-bold leading-tight text-parchment">

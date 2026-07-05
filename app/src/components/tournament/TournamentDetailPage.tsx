@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Tournament, MatchResult } from "../../types";
 import type { PlayerFormInput } from "../../hooks/useTournaments";
 import { calculateStandings } from "../../lib/standings";
+import { FAN_CONTENT_NOTICE } from "../../lib/legal";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { TournamentHeader } from "./TournamentHeader";
 import { PodiumSummary } from "./PodiumSummary";
@@ -154,7 +155,7 @@ export function TournamentDetailPage({
 
       <footer className="mt-auto border-t border-gold/6 px-5 py-7 text-center">
         <p className="m-0 font-sans text-xs text-parchment/20">
-          Hosted by Fernando Tuquina · Fan-made casual tournament tracker. Not affiliated with Wizards of the Coast.
+          Hosted by Fernando Tuquina · {FAN_CONTENT_NOTICE}
         </p>
       </footer>
 
