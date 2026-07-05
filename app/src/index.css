@@ -1,0 +1,131 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-heading: "Cinzel", serif;
+  --font-body: "Crimson Text", Georgia, serif;
+
+  /* Strixhaven Draft Academy palette */
+  --color-background-main: #101522;
+  --color-background-panel: #1a2133;
+  --color-parchment: #e9d8b4;
+  --color-parchment-dark: #c8ad7f;
+  --color-gold: #c89b3c;
+  --color-gold-dark: #a07d2e;
+  --color-ink: #16120d;
+  --color-arcane-blue: #3fa7ff;
+  --color-arcane-violet: #9d6bff;
+  --color-success: #4e9f3d;
+  --color-success-dark: #3a7e2e;
+  --color-danger: #b74134;
+  --color-danger-dark: #9e372d;
+  --color-silver: #c0c0c0;
+  --color-bronze: #cd7f32;
+
+  /* Mana chip colors */
+  --color-mana-w: #f9faf4;
+  --color-mana-w-border: #d4c9a8;
+  --color-mana-u: #0e68ab;
+  --color-mana-u-border: #0a4f82;
+  --color-mana-b: #2b2027;
+  --color-mana-b-text: #c8b8c0;
+  --color-mana-b-border: #444444;
+  --color-mana-r: #d3202a;
+  --color-mana-r-border: #a01820;
+  --color-mana-g: #00733e;
+  --color-mana-g-border: #005a30;
+
+  /* College accents */
+  --color-silverquill: #a8a8b0;
+  --color-prismari: #d3202a;
+  --color-witherbloom: #00733e;
+  --color-lorehold: #c89b3c;
+  --color-quandrix: #0e9aab;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(200, 155, 60, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(200, 155, 60, 0.5);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 3s ease infinite;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease;
+}
+
+body {
+  margin: 0;
+  background: #101522;
+  overflow-x: hidden;
+  font-family: var(--font-body);
+  color: var(--color-parchment);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #c89b3c !important;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(200, 155, 60, 0.3);
+  border-radius: 3px;
+}

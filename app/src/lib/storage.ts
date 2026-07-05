@@ -1,0 +1,20 @@
+import type { Tournament } from "../types";
+
+const STORAGE_KEY = "strixhaven-draft-tournaments";
+
+export function loadTournaments(): Tournament[] {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? (JSON.parse(saved) as Tournament[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveTournaments(tournaments: Tournament[]): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tournaments));
+  } catch {
+    // storage unavailable (e.g. private browsing quota) — ignore
+  }
+}
