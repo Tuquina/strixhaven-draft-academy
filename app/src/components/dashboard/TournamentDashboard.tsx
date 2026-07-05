@@ -8,6 +8,7 @@ import { TournamentCard } from "./TournamentCard";
 import { CreateTournamentModal } from "./CreateTournamentModal";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
 import { EmptyState } from "../shared/EmptyState";
+import { MatchTimerModal } from "../shared/MatchTimerModal";
 
 interface TournamentDashboardProps {
   tournaments: Tournament[];
@@ -55,6 +56,7 @@ export function TournamentDashboard({
 }: TournamentDashboardProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [showTimerModal, setShowTimerModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImportClick = () => fileInputRef.current?.click();
@@ -108,6 +110,12 @@ export function TournamentDashboard({
             className="cursor-pointer rounded-md border border-gold/25 bg-[#f0e6d0]/8 px-7 py-3.5 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/50 hover:bg-[#f0e6d0]/15"
           >
             Importar JSON
+          </button>
+          <button
+            onClick={() => setShowTimerModal(true)}
+            className="cursor-pointer rounded-md border border-gold/25 bg-[#f0e6d0]/8 px-7 py-3.5 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/50 hover:bg-[#f0e6d0]/15"
+          >
+            ⏱ Temporizador
           </button>
           <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleFileChange} />
         </div>
@@ -194,6 +202,8 @@ export function TournamentDashboard({
           }}
         />
       )}
+
+      {showTimerModal && <MatchTimerModal onClose={() => setShowTimerModal(false)} />}
     </div>
   );
 }
