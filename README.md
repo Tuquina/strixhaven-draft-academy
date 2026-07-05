@@ -1,25 +1,54 @@
-# CODING AGENTS: READ THIS FIRST
+# Strixhaven Draft Academy
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+A local-first web app for running casual Magic: The Gathering draft tournaments with a
+private group of friends, themed around Strixhaven. It handles player registration, deck
+color tracking (with Strixhaven college detection), automatic round-robin pairing, result
+entry, live standings, and tournament finalization with a final podium.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+Hosted by Fernando Tuquina. Fan-made project, not affiliated with Wizards of the Coast.
 
-## What you should do — IMPORTANT
+## Repository structure
 
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+```
+app/        Production app: React + TypeScript + Vite + Tailwind CSS. This is what runs.
+project/    Original Claude Design (claude.ai/design) export — the HTML/CSS/JS prototype
+            used as the design reference for app/. Kept for historical/visual reference.
+chats/      Design chat transcript(s) documenting the product requirements and decisions.
+```
 
-**Read `project/Strixhaven Draft Academy.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+See [CLAUDE.md](CLAUDE.md) for details on working in this codebase.
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+## Getting started
 
-## About the design files
+```bash
+cd app
+npm install
+npm run dev
+```
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+Then open the printed local URL in your browser.
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+Other useful commands (run from `app/`):
 
-## Bundle contents
+```bash
+npm run build     # type-check and build for production
+npm run lint       # run oxlint
+npm run preview     # preview the production build locally
+```
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Strixhaven Draft Academy` project files (HTML prototypes, assets, components)
+## Features
+
+- Create and manage multiple draft tournaments.
+- Register players and assign their deck colors; automatically shows the MTG color
+  combination and highlights the matching Strixhaven college.
+- Generate a round-robin schedule automatically, with bye/free-round support for odd
+  player counts.
+- Enter match results and see standings update automatically.
+- Finalize a tournament to lock it in and reveal the final podium.
+- Import/export tournaments as JSON.
+
+## Design origin
+
+The visual design was created in Claude Design and is preserved in
+[`project/Strixhaven Draft Academy.dc.html`](project/Strixhaven%20Draft%20Academy.dc.html),
+with the full design conversation in [`chats/chat1.md`](chats/chat1.md).
