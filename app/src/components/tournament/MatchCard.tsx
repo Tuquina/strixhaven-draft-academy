@@ -1,15 +1,21 @@
 import { useState } from "react";
 import type { MatchDisplay } from "../../lib/rounds";
+import type { MatchFormat, MatchResult } from "../../types";
 import { MatchTimerModal } from "../shared/MatchTimerModal";
+import { LiveMatchModal } from "./LiveMatchModal";
 
 interface MatchCardProps {
   match: MatchDisplay;
   canEdit: boolean;
+  format: MatchFormat;
+  allowDraws: boolean;
   onOpenResult: () => void;
+  onSaveResult: (matchId: string, result: MatchResult) => void;
 }
 
-export function MatchCard({ match, canEdit, onOpenResult }: MatchCardProps) {
+export function MatchCard({ match, canEdit, format, allowDraws, onOpenResult, onSaveResult }: MatchCardProps) {
   const [showTimer, setShowTimer] = useState(false);
+  const [showLiveMatch, setShowLiveMatch] = useState(false);
 
   if (match.isBye) {
     return (
@@ -43,12 +49,20 @@ export function MatchCard({ match, canEdit, onOpenResult }: MatchCardProps) {
           </>
         )}
         {match.isPending && (
-          <button
-            onClick={onOpenResult}
-            className="cursor-pointer rounded-[5px] border-none bg-gold/12 px-3 py-1.5 font-sans text-xs font-semibold text-gold hover:bg-gold/20"
-          >
-            Cargar resultado
-          </button>
+          <>
+            <button
+              onClick={() => setShowLiveMatch(true)}
+              className="cursor-pointer rounded-[5px] border border-gold/25 bg-transparent px-3 py-1.5 font-sans text-xs font-semibold text-gold hover:bg-gold/10"
+            >
+              ⚔️ Comenzar partida
+            </button>
+            <button
+              onClick={onOpenResult}
+              className="cursor-pointer rounded-[5px] border-none bg-gold/12 px-3 py-1.5 font-sans text-xs font-semibold text-gold hover:bg-gold/20"
+            >
+              Cargar resultado
+            </button>
+          </>
         )}
         <button
           onClick={() => setShowTimer(true)}
@@ -64,6 +78,19 @@ export function MatchCard({ match, canEdit, onOpenResult }: MatchCardProps) {
           playerAName={match.playerAName}
           playerBName={match.playerBName}
           onClose={() => setShowTimer(false)}
+        />
+      )}
+
+      {showLiveMatch && match.playerBId && (
+        <LiveMatchModal
+          playerAId={match.playerAId}
+          playerBId={match.playerBId}
+          playerAName={match.playerAName}
+          playerBName={match.playerBName}
+          format={format}
+          allowDraws={allowDraws}
+          onSave={(result) => onSaveResult(match.id, result)}
+          onClose={() => setShowLiveMatch(false)}
         />
       )}
     </div>

@@ -1,4 +1,4 @@
-import type { Tournament } from "../../types";
+import type { MatchResult, Tournament } from "../../types";
 import { describeRounds } from "../../lib/rounds";
 import { RoundCard } from "./RoundCard";
 
@@ -7,6 +7,7 @@ interface RoundRobinScheduleProps {
   hasResults: boolean;
   onRegenerate: () => void;
   onOpenResult: (matchId: string) => void;
+  onSaveResult: (matchId: string, result: MatchResult) => void;
 }
 
 export function RoundRobinSchedule({
@@ -14,6 +15,7 @@ export function RoundRobinSchedule({
   hasResults,
   onRegenerate,
   onOpenResult,
+  onSaveResult,
 }: RoundRobinScheduleProps) {
   const rounds = describeRounds(tournament);
   const canEdit = tournament.status !== "finished";
@@ -41,7 +43,15 @@ export function RoundRobinSchedule({
       )}
 
       {rounds.map((round) => (
-        <RoundCard key={round.id} round={round} canEdit={canEdit} onOpenResult={onOpenResult} />
+        <RoundCard
+          key={round.id}
+          round={round}
+          canEdit={canEdit}
+          format={tournament.format}
+          allowDraws={tournament.allowDraws}
+          onOpenResult={onOpenResult}
+          onSaveResult={onSaveResult}
+        />
       ))}
     </div>
   );

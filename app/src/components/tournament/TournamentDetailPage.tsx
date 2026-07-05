@@ -148,6 +148,10 @@ export function TournamentDetailPage({
               notify("Fixture generado — ¡a jugar!");
             }}
             onOpenResult={(matchId) => setResultModalMatchId(matchId)}
+            onSaveResult={(matchId, result) => {
+              onSaveResult(matchId, result);
+              notify("Resultado guardado");
+            }}
           />
         )}
 
