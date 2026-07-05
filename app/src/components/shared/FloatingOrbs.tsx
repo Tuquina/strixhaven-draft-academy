@@ -10,12 +10,12 @@ interface OrbSpec {
 }
 
 const ORBS: OrbSpec[] = [
-  { size: 180, color: "rgba(0, 200, 180, 0.35)", blur: 40, top: "10%", left: "4%", animation: "orbFloat1 12s ease-in-out infinite" },
-  { size: 140, color: "rgba(120, 60, 200, 0.4)", blur: 35, top: "28%", right: "6%", animation: "orbFloat2 15s ease-in-out infinite" },
-  { size: 120, color: "rgba(212, 175, 55, 0.35)", blur: 30, bottom: "22%", left: "8%", animation: "orbFloat3 18s ease-in-out infinite" },
-  { size: 160, color: "rgba(50, 180, 80, 0.3)", blur: 38, bottom: "35%", right: "4%", animation: "orbFloat1 20s ease-in-out infinite reverse" },
-  { size: 100, color: "rgba(0, 180, 200, 0.25)", blur: 25, top: "55%", left: "50%", animation: "orbFloat2 14s ease-in-out infinite" },
-  { size: 90, color: "rgba(160, 80, 220, 0.3)", blur: 28, top: "5%", right: "28%", animation: "orbFloat3 16s ease-in-out infinite" },
+  { size: 200, color: "rgba(0, 220, 200, 0.85)", blur: 32, top: "10%", left: "4%", animation: "orbFloat1 12s ease-in-out infinite" },
+  { size: 160, color: "rgba(150, 80, 230, 0.85)", blur: 28, top: "28%", right: "6%", animation: "orbFloat2 15s ease-in-out infinite" },
+  { size: 140, color: "rgba(230, 190, 60, 0.85)", blur: 26, bottom: "22%", left: "8%", animation: "orbFloat3 18s ease-in-out infinite" },
+  { size: 180, color: "rgba(60, 210, 100, 0.8)", blur: 30, bottom: "35%", right: "4%", animation: "orbFloat1 20s ease-in-out infinite reverse" },
+  { size: 120, color: "rgba(0, 200, 220, 0.75)", blur: 22, top: "55%", left: "50%", animation: "orbFloat2 14s ease-in-out infinite" },
+  { size: 110, color: "rgba(180, 100, 240, 0.8)", blur: 24, top: "5%", right: "28%", animation: "orbFloat3 16s ease-in-out infinite" },
 ];
 
 export function FloatingOrbs() {
