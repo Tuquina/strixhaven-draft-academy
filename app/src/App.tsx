@@ -3,6 +3,7 @@ import { useTournaments } from "./hooks/useTournaments";
 import { useNotification } from "./hooks/useNotification";
 import { TournamentDashboard } from "./components/dashboard/TournamentDashboard";
 import { TournamentDetailPage } from "./components/tournament/TournamentDetailPage";
+import { RulesPage } from "./components/rules/RulesPage";
 import { Notification } from "./components/shared/Notification";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
   } = useTournaments();
   const { message, notify } = useNotification();
   const [currentTournamentId, setCurrentTournamentId] = useState<string | null>(null);
+  const [showRules, setShowRules] = useState(false);
 
   const currentTournament = currentTournamentId
     ? tournaments.find((t) => t.id === currentTournamentId) ?? null
@@ -31,7 +33,9 @@ function App() {
     <div className="relative min-h-screen font-body text-parchment">
       <Notification message={message} />
 
-      {!currentTournament && (
+      {showRules && <RulesPage onBack={() => setShowRules(false)} />}
+
+      {!showRules && !currentTournament && (
         <TournamentDashboard
           tournaments={tournaments}
           syncStatus={syncStatus}
@@ -42,11 +46,12 @@ function App() {
             if (currentTournamentId === id) setCurrentTournamentId(null);
           }}
           onImportTournament={importTournament}
+          onShowRules={() => setShowRules(true)}
           notify={notify}
         />
       )}
 
-      {currentTournament && (
+      {!showRules && currentTournament && (
         <TournamentDetailPage
           tournament={currentTournament}
           onBack={() => setCurrentTournamentId(null)}

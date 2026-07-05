@@ -15,6 +15,7 @@ interface TournamentDashboardProps {
   onCreateTournament: (input: CreateTournamentInput) => string;
   onDeleteTournament: (id: string) => void;
   onImportTournament: (file: File) => Promise<boolean>;
+  onShowRules: () => void;
   notify: (text: string) => void;
 }
 
@@ -48,6 +49,7 @@ export function TournamentDashboard({
   onCreateTournament,
   onDeleteTournament,
   onImportTournament,
+  onShowRules,
   notify,
 }: TournamentDashboardProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -90,6 +92,9 @@ export function TournamentDashboard({
           </Button>
           <Button variant="secondary" className="px-5 py-3.5 text-sm" onClick={handleImportClick}>
             Importar JSON
+          </Button>
+          <Button variant="ghost" className="px-5 py-3.5 text-sm" onClick={onShowRules}>
+            📖 Reglas del draft
           </Button>
           <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleFileChange} />
         </div>
