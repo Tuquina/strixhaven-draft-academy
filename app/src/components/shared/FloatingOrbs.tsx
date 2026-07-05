@@ -47,7 +47,12 @@ function generateOrbs(count: number): Orb[] {
       color: COLORS[i % COLORS.length],
       top: `${top}%`,
       left: `${left}%`,
-      animation: `${keyframe} ${duration}s ease-in-out ${delay}s infinite`,
+      // `backwards` is the key part: without it, the element sits at its
+      // default (fully opaque, untransformed) style for the whole
+      // animation-delay before the keyframes ever apply, which is why
+      // orbs looked like static solid dots that then "popped" invisible
+      // once the animation actually started.
+      animation: `${keyframe} ${duration}s ease-in-out ${delay}s infinite normal backwards`,
     };
   });
 }
