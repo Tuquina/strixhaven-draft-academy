@@ -35,11 +35,11 @@ const SECTIONS: {
   status: Tournament["status"];
   title: string;
   dotClass: string;
-  titleClass: string;
+  titleGradient: string;
 }[] = [
-  { status: "active", title: "Torneos activos", dotClass: "bg-success", titleClass: "text-success" },
-  { status: "drafting", title: "Torneos en preparación", dotClass: "bg-arcane-violet", titleClass: "text-arcane-violet" },
-  { status: "finished", title: "Torneos finalizados", dotClass: "bg-gold", titleClass: "text-gold" },
+  { status: "active", title: "Torneos activos", dotClass: "bg-success", titleGradient: "text-gradient-success" },
+  { status: "drafting", title: "Torneos en preparación", dotClass: "bg-arcane-violet", titleGradient: "text-gradient-violet" },
+  { status: "finished", title: "Torneos finalizados", dotClass: "bg-gold", titleGradient: "text-gradient-gold" },
 ];
 
 export function TournamentDashboard({
@@ -79,7 +79,7 @@ export function TournamentDashboard({
         <div className="mb-4 font-sans text-[13px] font-semibold tracking-[4px] text-gold uppercase [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">
           ✦ Organizador Casual de Torneos Draft ✦
         </div>
-        <h1 className="m-0 bg-[linear-gradient(180deg,#e8d44d_0%,#8cc63f_35%,#3ea33e_70%,#2d7a2e_100%)] bg-clip-text font-heading-decorative text-[clamp(32px,6vw,56px)] leading-[1.15] font-black tracking-wide text-transparent animate-[heroTitleGlow_4s_ease-in-out_infinite]">
+        <h1 className="text-gradient-hero m-0 font-heading-decorative text-[clamp(32px,6vw,56px)] leading-[1.15] font-black tracking-wide animate-[heroTitleGlow_4s_ease-in-out_infinite]">
           Strixhaven Draft Academy
         </h1>
         <div className="mx-auto my-5 h-0.5 w-15 bg-gradient-to-r from-transparent via-[#5cb338] to-transparent" />
@@ -124,7 +124,7 @@ export function TournamentDashboard({
           if (list.length === 0) return null;
           return (
             <div key={section.status} className="mb-8">
-              <h2 className={`m-0 mb-4 flex items-center gap-2 font-sans text-[13px] font-bold tracking-[3px] uppercase ${section.titleClass}`}>
+              <h2 className={`m-0 mb-4 flex items-center gap-2 font-heading-decorative text-base font-bold tracking-[2px] uppercase ${section.titleGradient}`}>
                 <span className={`inline-block h-2 w-2 rounded-full ${section.dotClass}`} />
                 {section.title}
               </h2>

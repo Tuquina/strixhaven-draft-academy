@@ -17,13 +17,17 @@ export function EmptyState({ icon, title, subtitle, compact }: EmptyStateProps) 
     );
   }
   return (
-    <div className="animate-fade-in px-5 py-20 text-center">
-      {icon && <div className="mb-5 text-6xl opacity-30">{icon}</div>}
-      <p className="m-0 mb-2 font-heading text-xl font-semibold text-parchment/50">
+    <div className="animate-fade-in rounded-xl border border-gold/12 bg-arcane-violet/8 px-5 py-20 text-center backdrop-blur-sm">
+      {icon && (
+        <div className="mb-5 text-6xl opacity-80 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]">
+          {icon}
+        </div>
+      )}
+      <p className="text-gradient-gold m-0 mb-2 font-heading-decorative text-2xl font-bold">
         {title}
       </p>
       {subtitle && (
-        <p className="m-0 font-body text-base leading-relaxed text-parchment/35">
+        <p className="m-0 font-garamond text-lg leading-relaxed text-parchment/55">
           {subtitle}
         </p>
       )}

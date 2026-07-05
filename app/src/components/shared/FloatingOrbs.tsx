@@ -1,27 +1,53 @@
-interface OrbSpec {
-  size: number;
-  color: string;
-  blur: number;
-  animation: string;
-  top?: string;
-  left?: string;
-  right?: string;
-  bottom?: string;
-}
+import { useMemo } from "react";
 
-const ORBS: OrbSpec[] = [
-  { size: 200, color: "rgba(0, 220, 200, 0.85)", blur: 32, top: "10%", left: "4%", animation: "orbFloat1 12s ease-in-out infinite" },
-  { size: 160, color: "rgba(150, 80, 230, 0.85)", blur: 28, top: "28%", right: "6%", animation: "orbFloat2 15s ease-in-out infinite" },
-  { size: 140, color: "rgba(230, 190, 60, 0.85)", blur: 26, bottom: "22%", left: "8%", animation: "orbFloat3 18s ease-in-out infinite" },
-  { size: 180, color: "rgba(60, 210, 100, 0.8)", blur: 30, bottom: "35%", right: "4%", animation: "orbFloat1 20s ease-in-out infinite reverse" },
-  { size: 120, color: "rgba(0, 200, 220, 0.75)", blur: 22, top: "55%", left: "50%", animation: "orbFloat2 14s ease-in-out infinite" },
-  { size: 110, color: "rgba(180, 100, 240, 0.8)", blur: 24, top: "5%", right: "28%", animation: "orbFloat3 16s ease-in-out infinite" },
+// Bright core fading through the orb color — reads as a small magical
+// sparkle rather than a flat blurred blob.
+const COLORS = [
+  "rgba(0, 220, 200, 1)", // teal
+  "rgba(160, 90, 235, 1)", // purple
+  "rgba(230, 190, 60, 1)", // gold
+  "rgba(60, 210, 100, 1)", // green
 ];
 
+const FLOAT_KEYFRAMES = ["orbFloat1", "orbFloat2", "orbFloat3"];
+
+function randomBetween(min: number, max: number): number {
+  return min + Math.random() * (max - min);
+}
+
+interface Orb {
+  size: number;
+  blur: number;
+  color: string;
+  top: string;
+  left: string;
+  animation: string;
+}
+
+function generateOrbs(count: number): Orb[] {
+  return Array.from({ length: count }, (_, i) => {
+    const size = randomBetween(22, 52);
+    const duration = randomBetween(9, 20);
+    const delay = randomBetween(0, 14);
+    const direction = Math.random() < 0.5 ? " reverse" : "";
+    const keyframe = FLOAT_KEYFRAMES[i % FLOAT_KEYFRAMES.length];
+    return {
+      size,
+      blur: size * 0.3,
+      color: COLORS[i % COLORS.length],
+      top: `${randomBetween(2, 92)}%`,
+      left: `${randomBetween(2, 92)}%`,
+      animation: `${keyframe} ${duration}s ease-in-out ${delay}s infinite${direction}`,
+    };
+  });
+}
+
 export function FloatingOrbs() {
+  const orbs = useMemo(() => generateOrbs(10), []);
+
   return (
     <>
-      {ORBS.map((orb, i) => (
+      {orbs.map((orb, i) => (
         <div
           key={i}
           aria-hidden="true"
@@ -31,9 +57,8 @@ export function FloatingOrbs() {
             height: orb.size,
             top: orb.top,
             left: orb.left,
-            right: orb.right,
-            bottom: orb.bottom,
-            background: `radial-gradient(circle, ${orb.color} 0%, transparent 65%)`,
+            background: `radial-gradient(circle, rgba(255,255,255,0.9) 0%, ${orb.color} 30%, transparent 72%)`,
+            boxShadow: `0 0 ${orb.size * 0.8}px ${orb.color}`,
             filter: `blur(${orb.blur}px)`,
             animation: orb.animation,
             zIndex: 0,

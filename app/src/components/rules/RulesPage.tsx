@@ -43,7 +43,7 @@ const SECTIONS: { title: string; body: string }[] = [
 export function RulesPage({ onBack }: RulesPageProps) {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-[100] border-b border-gold/12 bg-background-panel px-6 py-4">
+      <header className="sticky top-0 z-[100] border-b border-gold/10 bg-background-panel/70 px-6 py-4 backdrop-blur-md">
         <div className="mx-auto flex max-w-[900px] items-center gap-3.5">
           <button
             onClick={onBack}
@@ -51,7 +51,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
           >
             ← Volver
           </button>
-          <h1 className="m-0 font-heading text-[clamp(16px,3vw,22px)] font-bold text-parchment">
+          <h1 className="text-gradient-gold m-0 font-heading-decorative text-[clamp(16px,3vw,22px)] font-bold">
             Reglas del Draft
           </h1>
         </div>
@@ -62,7 +62,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
           <div className="mb-3 font-sans text-xs tracking-[6px] text-gold/60 uppercase">
             ✦ Cómo se juega ✦
           </div>
-          <h2 className="m-0 font-heading text-[clamp(28px,5vw,40px)] font-extrabold text-parchment">
+          <h2 className="text-gradient-hero m-0 font-heading-decorative text-[clamp(28px,5vw,40px)] font-black animate-[heroTitleGlow_4s_ease-in-out_infinite]">
             Booster Draft
           </h2>
         </div>
@@ -73,7 +73,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
               key={section.title}
               className="rounded-xl border border-gold/12 bg-arcane-violet/8 p-6 backdrop-blur-sm"
             >
-              <h3 className="m-0 mb-2 font-heading text-lg font-bold text-gold">
+              <h3 className="text-gradient-gold m-0 mb-2 font-heading-decorative text-lg font-bold">
                 {section.title}
               </h3>
               <p className="m-0 font-body text-[15px] leading-relaxed text-parchment/70">

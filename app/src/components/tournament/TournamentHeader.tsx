@@ -18,7 +18,7 @@ export function TournamentHeader({
   onExport,
 }: TournamentHeaderProps) {
   return (
-    <header className="sticky top-0 z-[100] border-b border-gold/12 bg-background-panel px-6 py-4">
+    <header className="sticky top-0 z-[100] border-b border-gold/10 bg-background-panel/70 px-6 py-4 backdrop-blur-md">
       <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3">
         <div className="flex min-w-0 flex-1 items-center gap-3.5">
           <button
@@ -28,7 +28,7 @@ export function TournamentHeader({
             ← Volver
           </button>
           <div className="min-w-0">
-            <h1 className="m-0 overflow-hidden font-heading text-[clamp(16px,3vw,22px)] font-bold text-ellipsis whitespace-nowrap text-parchment">
+            <h1 className="text-gradient-gold m-0 overflow-hidden font-heading-decorative text-[clamp(16px,3vw,22px)] font-bold text-ellipsis whitespace-nowrap">
               {tournament.name}
             </h1>
             <div className="mt-1 flex flex-wrap items-center gap-2.5 font-sans text-xs text-parchment/45">

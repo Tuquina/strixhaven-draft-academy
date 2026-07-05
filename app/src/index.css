@@ -105,16 +105,16 @@
     opacity: 0.35;
   }
   25% {
-    transform: translate(15px, -25px) scale(1.1);
-    opacity: 0.5;
+    transform: translate(35px, -55px) scale(1.2);
+    opacity: 0.55;
   }
   50% {
-    transform: translate(-10px, -40px) scale(0.95);
-    opacity: 0.3;
+    transform: translate(-25px, -85px) scale(0.85);
+    opacity: 0.25;
   }
   75% {
-    transform: translate(20px, -15px) scale(1.05);
-    opacity: 0.45;
+    transform: translate(45px, -30px) scale(1.1);
+    opacity: 0.5;
   }
 }
 
@@ -125,12 +125,12 @@
     opacity: 0.3;
   }
   33% {
-    transform: translate(-20px, -30px) scale(1.15);
-    opacity: 0.5;
+    transform: translate(-50px, -65px) scale(1.25);
+    opacity: 0.55;
   }
   66% {
-    transform: translate(10px, -20px) scale(0.9);
-    opacity: 0.25;
+    transform: translate(30px, -40px) scale(0.8);
+    opacity: 0.2;
   }
 }
 
@@ -141,19 +141,19 @@
     opacity: 0.25;
   }
   20% {
-    transform: translate(25px, -10px) scale(1.05);
-    opacity: 0.4;
+    transform: translate(55px, -20px) scale(1.1);
+    opacity: 0.45;
   }
   40% {
-    transform: translate(-15px, -35px) scale(1.1);
+    transform: translate(-35px, -70px) scale(1.2);
     opacity: 0.35;
   }
   60% {
-    transform: translate(5px, -50px) scale(0.95);
-    opacity: 0.45;
+    transform: translate(15px, -95px) scale(0.85);
+    opacity: 0.5;
   }
   80% {
-    transform: translate(-20px, -20px) scale(1.08);
+    transform: translate(-45px, -35px) scale(1.15);
     opacity: 0.3;
   }
 }
@@ -215,4 +215,32 @@ textarea:focus {
 ::-webkit-scrollbar-thumb {
   background: rgba(200, 155, 60, 0.3);
   border-radius: 3px;
+}
+
+/* Shared decorative-title gradients — same visual language as the
+   dashboard hero title, tinted per context. */
+.text-gradient-hero,
+.text-gradient-success,
+.text-gradient-violet,
+.text-gradient-gold {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.text-gradient-hero {
+  background: linear-gradient(180deg, #e8d44d 0%, #8cc63f 35%, #3ea33e 70%, #2d7a2e 100%);
+}
+
+.text-gradient-success {
+  background: linear-gradient(180deg, #baf7a0 0%, #4ade80 55%, #22c55e 100%);
+}
+
+.text-gradient-violet {
+  background: linear-gradient(180deg, #e4d1ff 0%, #b18aff 55%, #7c3aed 100%);
+}
+
+.text-gradient-gold {
+  background: linear-gradient(180deg, #f5ecd8 0%, #e9d8b4 45%, #c89b3c 100%);
 }

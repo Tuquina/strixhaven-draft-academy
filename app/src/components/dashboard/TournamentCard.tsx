@@ -35,7 +35,7 @@ export function TournamentCard({
       className={`animate-fade-in rounded-xl border bg-background-panel/85 p-6 backdrop-blur-sm ${BORDER_CLASSES[tournament.status]}`}
     >
       <div className="mb-3 flex items-start justify-between gap-2">
-        <h3 className="m-0 font-heading text-xl font-bold leading-tight text-parchment">
+        <h3 className="text-gradient-gold m-0 font-heading-decorative text-xl font-bold leading-tight">
           {tournament.name}
         </h3>
         <StatusBadge status={tournament.status} />
