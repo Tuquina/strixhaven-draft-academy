@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #101522; overflow-x: hidden; }
+    * { box-sizing: border-box; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes confettiFall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+    @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 8px rgba(200,155,60,0.2); } 50% { box-shadow: 0 0 24px rgba(200,155,60,0.5); } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    input:focus, textarea:focus { outline: none; border-color: #C89B3C !important; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(200,155,60,0.3); border-radius: 3px; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;font-family:'Crimson Text',Georgia,serif;color:#E9D8B4;position:relative">
+
+  <!-- NOTIFICATION -->
+  <sc-if value="{{ notification }}">
+    <div style="position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2000;background:rgba(200,155,60,0.95);color:#16120D;padding:12px 24px;border-radius:8px;font:600 14px system-ui;box-shadow:0 4px 20px rgba(0,0,0,0.4);animation:slideDown 0.3s ease;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis">{{ notificationText }}</div>
+  </sc-if>
+
+  <!-- ═══════════ DASHBOARD VIEW ═══════════ -->
+  <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+    <div style="min-height:100vh;display:flex;flex-direction:column">
+      <header style="text-align:center;padding:60px 20px 40px;background:linear-gradient(180deg,rgba(26,33,51,0.8) 0%,transparent 100%)">
+        <div style="font:12px/1 system-ui;letter-spacing:6px;text-transform:uppercase;color:rgba(200,155,60,0.6);margin-bottom:16px">✦ Organizador casual de torneos Draft ✦</div>
+        <h1 style="font:800 clamp(32px,6vw,52px)/1.1 'Cinzel',serif;color:#E9D8B4;margin:0;letter-spacing:2px;text-shadow:0 2px 20px rgba(200,155,60,0.3)">Strixhaven Draft Academy</h1>
+        <div style="width:80px;height:2px;background:linear-gradient(90deg,transparent,#C89B3C,transparent);margin:20px auto"></div>
+        <p style="font:400 16px/1.5 'Crimson Text',serif;color:rgba(233,216,180,0.6);margin:0">Hosted by Fernando Tuquina</p>
+      </header>
+
+      <main style="flex:1;max-width:1200px;width:100%;margin:0 auto;padding:0 24px 60px">
+        <div style="display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap">
+          <button onClick="{{ openCreateModal }}" style="padding:14px 28px;border:none;border-radius:8px;background:linear-gradient(135deg,#C89B3C,#A07D2E);color:#16120D;font:700 15px 'Cinzel',serif;cursor:pointer;letter-spacing:1px;box-shadow:0 2px 12px rgba(200,155,60,0.3)" style-hover="box-shadow:0 4px 24px rgba(200,155,60,0.5);transform:translateY(-1px)">✦ Crear nuevo torneo</button>
+          <button onClick="{{ triggerImport }}" style="padding:14px 20px;border:1px solid rgba(200,155,60,0.3);border-radius:8px;background:transparent;color:#C89B3C;font:600 14px system-ui;cursor:pointer" style-hover="background:rgba(200,155,60,0.1)">Importar JSON</button>
+        </div>
+
+        <sc-if value="{{ noTournaments }}">
+          <div style="text-align:center;padding:80px 20px;animation:fadeIn 0.5s ease">
+            <div style="font-size:64px;margin-bottom:20px;opacity:0.3">📜</div>
+            <p style="font:600 20px/1.4 'Cinzel',serif;color:rgba(233,216,180,0.5);margin:0 0 8px">Todavía no hay torneos</p>
+            <p style="font:400 16px/1.5 'Crimson Text',serif;color:rgba(233,216,180,0.35);margin:0">Creá tu primer draft de Strixhaven.</p>
+          </div>
+        </sc-if>
+
+        <!-- Active tournaments -->
+        <sc-if value="{{ hasActive }}">
+          <div style="margin-bottom:32px">
+            <h2 style="font:700 13px/1 system-ui;text-transform:uppercase;letter-spacing:3px;color:#4E9F3D;margin:0 0 16px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:#4E9F3D;display:inline-block"></span> Torneos activos</h2>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px">
+              <sc-for list="{{ activeTournaments }}" as="t" hint-placeholder-count="0">
+                <div style="background:#1A2133;border:1px solid rgba(78,159,61,0.25);border-radius:12px;padding:24px;animation:fadeIn 0.3s ease">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+                    <h3 style="font:700 20px/1.2 'Cinzel',serif;color:#E9D8B4;margin:0">{{ t.name }}</h3>
+                    <span style="padding:4px 10px;border-radius:4px;background:rgba(78,159,61,0.15);color:#4E9F3D;font:700 11px system-ui;text-transform:uppercase;letter-spacing:1px;flex-shrink:0">Activo</span>
+                  </div>
+                  <div style="display:flex;gap:16px;font:400 13px system-ui;color:rgba(233,216,180,0.5);margin-bottom:8px;flex-wrap:wrap">
+                    <span>{{ t.playerCount }} jugadores</span>
+                    <span>{{ t.roundCount }} rondas</span>
+                    <span>{{ t.createdDate }}</span>
+                  </div>
+                  <sc-if value="{{ t.leader }}">
+                    <div style="font:600 13px system-ui;color:#C89B3C;margin-bottom:12px">Líder: {{ t.leader }}</div>
+                  </sc-if>
+                  <div style="display:flex;gap:8px;margin-top:12px">
+                    <button onClick="{{ t.open }}" style="flex:1;padding:10px;border:1px solid rgba(200,155,60,0.3);border-radius:6px;background:transparent;color:#C89B3C;font:600 13px system-ui;cursor:pointer" style-hover="background:rgba(200,155,60,0.1)">Abrir torneo</button>
+                    <button onClick="{{ t.confirmDelete }}" style="padding:10px 14px;border:1px solid rgba(183,65,52,0.3);border-radius:6px;background:transparent;color:#B74134;font:600 12px system-ui;cursor:pointer" style-hover="background:rgba(183,65,52,0.1)">Eliminar</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- Drafting tournaments -->
+        <sc-if value="{{ hasDrafting }}">
+          <div style="margin-bottom:32px">
+            <h2 style="font:700 13px/1 system-ui;text-transform:uppercase;letter-spacing:3px;color:#9D6BFF;margin:0 0 16px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:#9D6BFF;display:inline-block"></span> Torneos en preparación</h2>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px">
+              <sc-for list="{{ draftingTournaments }}" as="t" hint-placeholder-count="0">
+                <div style="background:#1A2133;border:1px solid rgba(157,107,255,0.2);border-radius:12px;padding:24px;animation:fadeIn 0.3s ease">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+                    <h3 style="font:700 20px/1.2 'Cinzel',serif;color:#E9D8B4;margin:0">{{ t.name }}</h3>
+                    <span style="padding:4px 10px;border-radius:4px;background:rgba(157,107,255,0.15);color:#9D6BFF;font:700 11px system-ui;text-transform:uppercase;letter-spacing:1px;flex-shrink:0">Preparación</span>
+                  </div>
+                  <div style="display:flex;gap:16px;font:400 13px system-ui;color:rgba(233,216,180,0.5);flex-wrap:wrap">
+                    <span>{{ t.playerCount }} jugadores</span>
+                    <span>{{ t.createdDate }}</span>
+                  </div>
+                  <div style="display:flex;gap:8px;margin-top:16px">
+                    <button onClick="{{ t.open }}" style="flex:1;padding:10px;border:1px solid rgba(200,155,60,0.3);border-radius:6px;background:transparent;color:#C89B3C;font:600 13px system-ui;cursor:pointer" style-hover="background:rgba(200,155,60,0.1)">Abrir torneo</button>
+                    <button onClick="{{ t.confirmDelete }}" style="padding:10px 14px;border:1px solid rgba(183,65,52,0.3);border-radius:6px;background:transparent;color:#B74134;font:600 12px system-ui;cursor:pointer" style-hover="background:rgba(183,65,52,0.1)">Eliminar</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- Finished tournaments -->
+        <sc-if value="{{ hasFinished }}">
+          <div style="margin-bottom:32px">
+            <h2 style="font:700 13px/1 system-ui;text-transform:uppercase;letter-spacing:3px;color:#C89B3C;margin:0 0 16px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:#C89B3C;display:inline-block"></span> Torneos finalizados</h2>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px">
+              <sc-for list="{{ finishedTournaments }}" as="t" hint-placeholder-count="0">
+                <div style="background:#1A2133;border:1px solid rgba(200,155,60,0.2);border-radius:12px;padding:24px;animation:fadeIn 0.3s ease">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+                    <h3 style="font:700 20px/1.2 'Cinzel',serif;color:#E9D8B4;margin:0">{{ t.name }}</h3>
+                    <span style="padding:4px 10px;border-radius:4px;background:rgba(200,155,60,0.15);color:#C89B3C;font:700 11px system-ui;text-transform:uppercase;letter-spacing:1px;flex-shrink:0">Finalizado</span>
+                  </div>
+                  <div style="display:flex;gap:16px;font:400 13px system-ui;color:rgba(233,216,180,0.5);flex-wrap:wrap">
+                    <span>{{ t.playerCount }} jugadores</span>
+                    <span>{{ t.roundCount }} rondas</span>
+                    <span>{{ t.createdDate }}</span>
+                  </div>
+                  <sc-if value="{{ t.leader }}">
+                    <div style="font:600 13px system-ui;color:#C89B3C;margin-top:8px">Campeón: {{ t.leader }}</div>
+                  </sc-if>
+                  <div style="display:flex;gap:8px;margin-top:16px">
+                    <button onClick="{{ t.open }}" style="flex:1;padding:10px;border:1px solid rgba(200,155,60,0.3);border-radius:6px;background:transparent;color:#C89B3C;font:600 13px system-ui;cursor:pointer" style-hover="background:rgba(200,155,60,0.1)">Abrir torneo</button>
+                    <button onClick="{{ t.confirmDelete }}" style="padding:10px 14px;border:1px solid rgba(183,65,52,0.3);border-radius:6px;background:transparent;color:#B74134;font:600 12px system-ui;cursor:pointer" style-hover="background:rgba(183,65,52,0.1)">Eliminar</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- Draft tips -->
+        <sc-if value="{{ showDraftTips }}">
+          <div style="margin-top:40px;padding:24px;background:rgba(157,107,255,0.04);border:1px solid rgba(157,107,255,0.12);border-radius:12px">
+            <h3 style="font:700 13px system-ui;color:#9D6BFF;margin:0 0 12px;text-transform:uppercase;letter-spacing:2px">Tips para el draft</h3>
+            <div style="display:flex;flex-direction:column;gap:6px;font:400 14px/1.5 system-ui;color:rgba(233,216,180,0.45)">
+              <span>✦ Mazo recomendado: 40 cartas.</span>
+              <span>✦ Base típica: 17 tierras y 23 hechizos.</span>
+              <span>✦ Las tierras no básicas solo cuentan si las drafteaste.</span>
+              <span>✦ En draft casual, 5 jugadores funciona bien con round robin.</span>
+              <span>✦ 8 jugadores es el pod clásico ideal.</span>
+            </div>
+          </div>
+        </sc-if>
+      </main>
+
+      <footer style="text-align:center;padding:32px 20px;border-top:1px solid rgba(200,155,60,0.08)">
+        <p style="font:400 12px system-ui;color:rgba(233,216,180,0.25);margin:0">Fan-made casual tournament tracker. Not affiliated with Wizards of the Coast.</p>
+      </footer>
+    </div>
+  </sc-if>
+
+  <!-- ═══════════ TOURNAMENT DETAIL VIEW ═══════════ -->
+  <sc-if value="{{ isTournament }}">
+    <div style="min-height:100vh;display:flex;flex-direction:column">
+      <!-- Header -->
+      <header style="padding:16px 24px;background:#1A2133;border-bottom:1px solid rgba(200,155,60,0.12);position:sticky;top:0;z-index:100">
+        <div style="max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div style="display:flex;align-items:center;gap:14px;flex:1;min-width:0">
+            <button onClick="{{ goToDashboard }}" style="padding:8px 12px;border:1px solid rgba(200,155,60,0.2);border-radius:6px;background:transparent;color:#C89B3C;font:600 13px system-ui;cursor:pointer;white-space:nowrap" style-hover="background:rgba(200,155,60,0.1)">← Volver</button>
+            <div style="min-width:0">
+              <h1 style="font:700 clamp(16px,3vw,22px)/1.2 'Cinzel',serif;color:#E9D8B4;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tournamentName }}</h1>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:4px;font:400 12px system-ui;color:rgba(233,216,180,0.45);flex-wrap:wrap">
+                <span style="padding:2px 8px;border-radius:4px;background:rgba(200,155,60,0.1);color:#C89B3C;font:700 10px system-ui;text-transform:uppercase;letter-spacing:1px">{{ tournamentStatusLabel }}</span>
+                <span>{{ playerCount }} jugadores</span>
+                <span style="color:rgba(233,216,180,0.3)">Hosted by Fernando Tuquina</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <sc-if value="{{ isActive }}">
+              <button onClick="{{ openFinalizeModal }}" style="padding:9px 16px;border:none;border-radius:6px;background:linear-gradient(135deg,#C89B3C,#A07D2E);color:#16120D;font:700 12px system-ui;cursor:pointer" style-hover="box-shadow:0 2px 12px rgba(200,155,60,0.4)">Finalizar torneo</button>
+            </sc-if>
+            <sc-if value="{{ isFinished }}">
+              <button onClick="{{ reopenTournament }}" style="padding:9px 16px;border:1px solid rgba(200,155,60,0.3);border-radius:6px;background:transparent;color:#C89B3C;font:600 12px system-ui;cursor:pointer" style-hover="background:rgba(200,155,60,0.1)">Reabrir torneo</button>
+            </sc-if>
+            <button onClick="{{ exportTournament }}" style="padding:9px 12px;border:1px solid rgba(255,255,255,0.08);border-radius:6px;background:transparent;color:rgba(233,216,180,0.4);font:600 12px system-ui;cursor:pointer" style-hover="border-color:rgba(255,255,255,0.15)">Exportar</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Podium -->
+      <sc-if value="{{ hasPodium }}">
+        <div style="padding:40px 24px;text-align:center;background:linear-gradient(180deg,rgba(200,155,60,0.06),transparent)">
+          <h2 style="font:800 28px/1 'Cinzel',serif;color:#C89B3C;margin:0 0 32px">Podio Final</h2>
+          <div style="display:flex;justify-content:center;align-items:flex-end;gap:32px;max-width:600px;margin:0 auto;flex-wrap:wrap">
+            <sc-for list="{{ podium }}" as="p" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px;animation:fadeIn 0.5s ease">
+                <div style="font-size:40px">{{ p.medal }}</div>
+                <div style="font:700 18px 'Cinzel',serif;color:#E9D8B4">{{ p.name }}</div>
+                <div style="font:400 13px system-ui;color:rgba(233,216,180,0.5)">{{ p.comboName }}</div>
+                <div style="font:700 14px system-ui;color:#C89B3C">{{ p.pts }} pts</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:28px;padding:16px 20px;background:rgba(200,155,60,0.06);border:1px solid rgba(200,155,60,0.12);border-radius:8px;display:inline-block;max-width:500px">
+            <p style="font:600 14px/1.4 system-ui;color:rgba(233,216,180,0.6);margin:0">Campeón: {{ championName }} con {{ championCombo }}</p>
+            <p style="font:400 12px system-ui;color:rgba(233,216,180,0.3);margin:4px 0 0">Hosted by Fernando Tuquina</p>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- Mobile tabs -->
+      <sc-if value="{{ isMobile }}">
+        <div style="display:flex;border-bottom:1px solid rgba(200,155,60,0.12);background:#1A2133">
+          <button onClick="{{ setPlayersTab }}" style="{{ playersTabStyle }}">Jugadores</button>
+          <button onClick="{{ setRoundsTab }}" style="{{ roundsTabStyle }}">Rondas</button>
+          <button onClick="{{ setStandingsTab }}" style="{{ standingsTabStyle }}">Tabla</button>
+        </div>
+      </sc-if>
+
+      <!-- Main content -->
+      <div style="{{ detailLayoutStyle }}">
+
+        <!-- ── PLAYERS ── -->
+        <sc-if value="{{ showPlayers }}">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <h2 style="font:700 14px system-ui;text-transform:uppercase;letter-spacing:2px;color:#C89B3C;margin:0;display:flex;align-items:center;gap:8px">Jugadores <span style="font:400 12px system-ui;color:rgba(233,216,180,0.35)">({{ playerCount }})</span></h2>
+
+            <sc-if value="{{ isActiveOrDrafting }}">
+              <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(200,155,60,0.1);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:10px">
+                <input placeholder="Nombre del jugador" value="{{ playerFormName }}" onInput="{{ handlePlayerName }}" style="width:100%;padding:11px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:8px;background:rgba(0,0,0,0.3);color:#E9D8B4;font:400 15px 'Crimson Text',serif" />
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <sc-for list="{{ colorChips }}" as="chip" hint-placeholder-count="5">
+                    <button onClick="{{ chip.toggle }}" style="{{ chip.style }}" style-hover="opacity:0.85">{{ chip.letter }} {{ chip.name }}</button>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ formHasColors }}">
+                  <div style="font:600 13px system-ui;color:#C89B3C;padding:8px 12px;background:rgba(200,155,60,0.06);border-radius:6px;border:1px solid rgba(200,155,60,0.1)">{{ formComboName }}</div>
+                </sc-if>
+                <input placeholder="Notas del mazo (opcional)" value="{{ playerFormNotes }}" onInput="{{ handlePlayerNotes }}" style="width:100%;padding:9px 14px;border:1px solid rgba(255,255,255,0.06);border-radius:8px;background:rgba(0,0,0,0.2);color:#E9D8B4;font:400 14px 'Crimson Text',serif" />
+                <div style="display:flex;gap:8px">
+                  <button onClick="{{ savePlayer }}" style="flex:1;padding:11px;border:none;border-radius:8px;background:linear-gradient(135deg,#C89B3C,#A07D2E);color:#16120D;font:700 13px system-ui;cursor:pointer" style-hover="box-shadow:0 2px 12px rgba(200,155,60,0.4)">{{ savePlayerLabel }}</button>
+                  <sc-if value="{{ isEditingPlayer }}">
+                    <button onClick="{{ cancelEdit }}" style="padding:11px 14px;border:1px solid rgba(255,255,255,0.12);border-radius:8px;background:transparent;color:rgba(233,216,180,0.5);font:600 13px system-ui;cursor:pointer" style-hover="background:rgba(255,255,255,0.04)">Cancelar</button>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ hasPlayerCountMsg }}">
+              <div style="font:400 12px/1.5 system-ui;color:rgba(157,107,255,0.7);padding:10px 12px;background:rgba(157,107,255,0.05);border-radius:8px;border:1px solid rgba(157,107,255,0.08)">{{ playerCountMsg }}</div>
+            </sc-if>
+
+            <sc-for list="{{ enrichedPlayers }}" as="player" hint-placeholder-count="0">
+              <div style="{{ player.cardStyle }}">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+                  <span style="font:700 16px 'Cinzel',serif;color:#E9D8B4">{{ player.name }}</span>
+                  <sc-if value="{{ isActiveOrDrafting }}">
+                    <div style="display:flex;gap:4px;flex-shrink:0">
+                      <button onClick="{{ player.edit }}" style="padding:5px 10px;border:1px solid rgba(200,155,60,0.2);border-radius:4px;background:transparent;color:#C89B3C;font:600 11px system-ui;cursor:pointer" style-hover="background:rgba(200,155,60,0.08)">Editar</button>
+                      <button onClick="{{ player.remove }}" style="padding:5px 10px;border:1px solid rgba(183,65,52,0.2);border-radius:4px;background:transparent;color:#B74134;font:600 11px system-ui;cursor:pointer" style-hover="background:rgba(183,65,52,0.08)">Eliminar</button>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap">
+                  <div style="display:flex;gap:4px">
+                    <sc-for list="{{ player.colorBadges }}" as="badge" hint-placeholder-count="0">
+                      <span style="{{ badge.style }}">{{ badge.letter }}</span>
+                    </sc-for>
+                  </div>
+                  <span style="font:600 13px system-ui;color:rgba(233,216,180,0.55)">{{ player.comboName }}</span>
+                </div>
+                <sc-if value="{{ player.deckNotes }}">
+                  <div style="font:italic 12px/1.4 'Crimson Text',serif;color:rgba(233,216,180,0.35);margin-top:6px">{{ player.deckNotes }}</div>
+                </sc-if>
+              </div>
+            </sc-for>
+
+            <sc-if value="{{ showGenerateBtn }}">
+              <button onClick="{{ generateSchedule }}" style="width:100%;padding:14px;border:none;border-radius:8px;background:linear-gradient(135deg,#4E9F3D,#3A7E2E);color:#fff;font:700 14px 'Cinzel',serif;cursor:pointer;letter-spacing:1px;margin-top:4px" style-hover="box-shadow:0 2px 16px rgba(78,159,61,0.4)">Generar fixture</button>
+            </sc-if>
+
+            <sc-if value="{{ noPlayers }}">
+              <div style="text-align:center;padding:28px 16px;color:rgba(233,216,180,0.3);font:400 13px system-ui">Agregá jugadores para comenzar.</div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- ── ROUNDS ── -->
+        <sc-if value="{{ showRounds }}">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <h2 style="font:700 14px system-ui;text-transform:uppercase;letter-spacing:2px;color:#C89B3C;margin:0">Rondas</h2>
+              <sc-if value="{{ canRegenerate }}">
+                <button onClick="{{ regenerateSchedule }}" style="padding:5px 10px;border:1px solid rgba(255,255,255,0.08);border-radius:4px;background:transparent;color:rgba(233,216,180,0.35);font:600 11px system-ui;cursor:pointer" style-hover="border-color:rgba(255,255,255,0.15)">Regenerar</button>
+              </sc-if>
+            </div>
+
+            <sc-if value="{{ noRounds }}">
+              <div style="text-align:center;padding:36px 16px;color:rgba(233,216,180,0.3);font:400 13px system-ui;background:rgba(255,255,255,0.015);border-radius:8px;border:1px dashed rgba(255,255,255,0.06)">
+                <p style="margin:0 0 4px">Generá el fixture para comenzar las rondas.</p>
+                <p style="margin:0;font-size:11px;color:rgba(233,216,180,0.2)">Necesitás al menos 2 jugadores.</p>
+              </div>
+            </sc-if>
+
+            <sc-for list="{{ roundsDisplay }}" as="round" hint-placeholder-count="0">
+              <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(200,155,60,0.08);border-radius:10px;padding:16px;animation:fadeIn 0.3s ease">
+                <h3 style="font:700 14px 'Cinzel',serif;color:#E9D8B4;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid rgba(200,155,60,0.06)">Ronda {{ round.number }}</h3>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <sc-for list="{{ round.matches }}" as="match" hint-placeholder-count="0">
+                    <div style="padding:10px 12px;background:rgba(0,0,0,0.12);border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+                      <sc-if value="{{ match.isBye }}">
+                        <span style="font:italic 13px system-ui;color:rgba(233,216,180,0.4)">Libre: {{ match.byePlayer }}</span>
+                      </sc-if>
+                      <sc-if value="{{ match.isMatch }}">
+                        <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;flex-wrap:wrap">
+                          <span style="font:600 14px 'Crimson Text',serif;color:#E9D8B4">{{ match.playerAName }}</span>
+                          <span style="font:400 11px system-ui;color:rgba(233,216,180,0.25)">vs</span>
+                          <span style="font:600 14px 'Crimson Text',serif;color:#E9D8B4">{{ match.playerBName }}</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+                          <sc-if value="{{ match.isCompleted }}">
+                            <span style="font:600 12px system-ui;color:#4E9F3D">{{ match.resultText }}</span>
+                            <sc-if value="{{ isActiveOrDrafting }}">
+                              <button onClick="{{ match.editResult }}" style="padding:4px 8px;border:1px solid rgba(200,155,60,0.15);border-radius:4px;background:transparent;color:#C89B3C;font:600 10px system-ui;cursor:pointer" style-hover="background:rgba(200,155,60,0.08)">Editar</button>
+                            </sc-if>
+                          </sc-if>
+                          <sc-if value="{{ match.isPending }}">
+                            <button onClick="{{ match.enterResult }}" style="padding:7px 12px;border:none;border-radius:5px;background:rgba(200,155,60,0.12);color:#C89B3C;font:600 12px system-ui;cursor:pointer" style-hover="background:rgba(200,155,60,0.2)">Cargar resultado</button>
+                          </sc-if>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- ── STANDINGS ── -->
+        <sc-if value="{{ showStandings }}">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <h2 style="font:700 14px system-ui;text-transform:uppercase;letter-spacing:2px;color:#C89B3C;margin:0">Tabla de posiciones</h2>
+
+            <sc-if value="{{ currentLeader }}">
+              <div style="padding:12px 14px;background:rgba(200,155,60,0.06);border:1px solid rgba(200,155,60,0.15);border-radius:8px;animation:glowPulse 3s ease infinite">
+                <div style="font:700 13px system-ui;color:#C89B3C">Líder actual: {{ leaderName }} — {{ leaderPts }} pts</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ noStandings }}">
+              <div style="text-align:center;padding:28px 16px;color:rgba(233,216,180,0.3);font:400 13px system-ui">Todavía no hay resultados cargados.</div>
+            </sc-if>
+
+            <sc-if value="{{ hasStandings }}">
+              <div style="overflow-x:auto;border-radius:8px;border:1px solid rgba(200,155,60,0.08)">
+                <table style="width:100%;border-collapse:collapse;font:400 12px system-ui;min-width:560px">
+                  <thead>
+                    <tr style="background:rgba(200,155,60,0.06)">
+                      <th style="padding:10px 6px;text-align:center;color:#C89B3C;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:1px">#</th>
+                      <th style="padding:10px 6px;text-align:left;color:#C89B3C;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:1px">Jugador</th>
+                      <th style="padding:10px 6px;text-align:center;color:rgba(233,216,180,0.4);font-weight:600;font-size:10px" title="Partidos jugados">PJ</th>
+                      <th style="padding:10px 6px;text-align:center;color:rgba(233,216,180,0.4);font-weight:600;font-size:10px" title="Partidos ganados">PG</th>
+                      <th style="padding:10px 6px;text-align:center;color:rgba(233,216,180,0.4);font-weight:600;font-size:10px" title="Empates">PE</th>
+                      <th style="padding:10px 6px;text-align:center;color:rgba(233,216,180,0.4);font-weight:600;font-size:10px" title="Partidos perdidos">PP</th>
+                      <th style="padding:10px 6px;text-align:center;color:rgba(233,216,180,0.4);font-weight:600;font-size:10px" title="Juegos ganados">JG</th>
+                      <th style="padding:10px 6px;text-align:center;color:rgba(233,216,180,0.4);font-weight:600;font-size:10px" title="Juegos perdidos">JP</th>
+                      <th style="padding:10px 6px;text-align:center;color:rgba(233,216,180,0.4);font-weight:600;font-size:10px" title="Diferencia">Dif</th>
+                      <th style="padding:10px 6px;text-align:center;color:#C89B3C;font-weight:700;font-size:10px;text-transform:uppercase">Pts</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <sc-for list="{{ standings }}" as="row" hint-placeholder-count="0">
+                      <tr style="{{ row.rowStyle }}">
+                        <td style="padding:9px 6px;text-align:center;color:rgba(233,216,180,0.4);font-weight:600">{{ row.position }}</td>
+                        <td style="padding:9px 6px;text-align:left;color:#E9D8B4;font:600 13px 'Crimson Text',serif;white-space:nowrap">{{ row.name }}</td>
+                        <td style="padding:9px 6px;text-align:center;color:rgba(233,216,180,0.45)">{{ row.pj }}</td>
+                        <td style="padding:9px 6px;text-align:center;color:#4E9F3D">{{ row.pg }}</td>
+                        <td style="padding:9px 6px;text-align:center;color:rgba(233,216,180,0.35)">{{ row.pe }}</td>
+                        <td style="padding:9px 6px;text-align:center;color:#B74134">{{ row.pp }}</td>
+                        <td style="padding:9px 6px;text-align:center;color:rgba(233,216,180,0.45)">{{ row.jg }}</td>
+                        <td style="padding:9px 6px;text-align:center;color:rgba(233,216,180,0.45)">{{ row.jp }}</td>
+                        <td style="padding:9px 6px;text-align:center;color:rgba(233,216,180,0.45)">{{ row.diff }}</td>
+                        <td style="padding:9px 6px;text-align:center;color:#C89B3C;font-weight:700;font-size:14px">{{ row.pts }}</td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button onClick="{{ copyStandings }}" style="padding:9px 14px;border:1px solid rgba(200,155,60,0.2);border-radius:6px;background:transparent;color:#C89B3C;font:600 12px system-ui;cursor:pointer" style-hover="background:rgba(200,155,60,0.08)">Copiar tabla</button>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+      </div>
+
+      <footer style="text-align:center;padding:28px 20px;border-top:1px solid rgba(200,155,60,0.06);margin-top:auto">
+        <p style="font:400 12px system-ui;color:rgba(233,216,180,0.2);margin:0">Hosted by Fernando Tuquina · Fan-made casual tournament tracker. Not affiliated with Wizards of the Coast.</p>
+      </footer>
+    </div>
+  </sc-if>
+</div>
+
+<!-- ═══════════ MODALS ═══════════ -->
+
+<!-- Create Tournament Modal -->
+<sc-if value="{{ showCreateModal }}">
+  <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease">
+    <div style="background:#1A2133;border:1px solid rgba(200,155,60,0.2);border-radius:14px;padding:28px;max-width:460px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
+      <h2 style="font:700 22px 'Cinzel',serif;color:#E9D8B4;margin:0 0 20px">Crear nuevo torneo</h2>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <label style="display:block;font:600 11px system-ui;color:rgba(233,216,180,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Nombre del torneo</label>
+          <input value="{{ createFormName }}" onInput="{{ handleCreateName }}" style="width:100%;padding:11px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:8px;background:rgba(0,0,0,0.3);color:#E9D8B4;font:400 15px 'Crimson Text',serif" />
+        </div>
+        <div>
+          <label style="display:block;font:600 11px system-ui;color:rgba(233,216,180,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Descripción (opcional)</label>
+          <input value="{{ createFormDesc }}" onInput="{{ handleCreateDesc }}" style="width:100%;padding:11px 14px;border:1px solid rgba(255,255,255,0.06);border-radius:8px;background:rgba(0,0,0,0.2);color:#E9D8B4;font:400 14px 'Crimson Text',serif" />
+        </div>
+        <div>
+          <label style="display:block;font:600 11px system-ui;color:rgba(233,216,180,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Formato de partida</label>
+          <div style="display:flex;gap:8px">
+            <button onClick="{{ toggleBo3 }}" style="{{ bo3Style }}">Mejor de 3</button>
+            <button onClick="{{ toggleBo1 }}" style="{{ bo1Style }}">Partida única</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <label style="font:600 12px system-ui;color:rgba(233,216,180,0.4)">Permitir empates</label>
+          <button onClick="{{ toggleDraws }}" style="{{ drawsToggleStyle }}">{{ drawsLabel }}</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:24px">
+        <button onClick="{{ createTournament }}" style="flex:1;padding:13px;border:none;border-radius:8px;background:linear-gradient(135deg,#C89B3C,#A07D2E);color:#16120D;font:700 14px 'Cinzel',serif;cursor:pointer" style-hover="box-shadow:0 4px 20px rgba(200,155,60,0.4)">Crear torneo</button>
+        <button onClick="{{ closeCreateModal }}" style="padding:13px 18px;border:1px solid rgba(255,255,255,0.12);border-radius:8px;background:transparent;color:rgba(233,216,180,0.45);font:600 13px system-ui;cursor:pointer" style-hover="background:rgba(255,255,255,0.04)">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- Result Modal -->
+<sc-if value="{{ showResultModal }}">
+  <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease">
+    <div style="background:#1A2133;border:1px solid rgba(200,155,60,0.2);border-radius:14px;padding:28px;max-width:420px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
+      <h2 style="font:700 20px 'Cinzel',serif;color:#E9D8B4;margin:0 0 20px">Cargar resultado</h2>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <label style="font:600 11px system-ui;color:rgba(233,216,180,0.4);text-transform:uppercase;letter-spacing:1px">Ganador</label>
+        <div style="display:flex;gap:8px">
+          <button onClick="{{ selectWinnerA }}" style="{{ winnerAStyle }}" style-hover="opacity:0.9">{{ resultPlayerA }}</button>
+          <button onClick="{{ selectWinnerB }}" style="{{ winnerBStyle }}" style-hover="opacity:0.9">{{ resultPlayerB }}</button>
+        </div>
+        <sc-if value="{{ allowDraws }}">
+          <button onClick="{{ selectDraw }}" style="{{ drawBtnStyle }}" style-hover="opacity:0.9">Empate</button>
+        </sc-if>
+        <sc-if value="{{ hasScoreOptions }}">
+          <label style="font:600 11px system-ui;color:rgba(233,216,180,0.4);text-transform:uppercase;letter-spacing:1px">Marcador</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <sc-for list="{{ scoreOptions }}" as="opt" hint-placeholder-count="0">
+              <button onClick="{{ opt.select }}" style="{{ opt.style }}" style-hover="opacity:0.9">{{ opt.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:24px">
+        <button onClick="{{ saveResult }}" style="flex:1;padding:13px;border:none;border-radius:8px;background:linear-gradient(135deg,#4E9F3D,#3A7E2E);color:#fff;font:700 14px 'Cinzel',serif;cursor:pointer;opacity:{{ saveResultOpacity }}" style-hover="box-shadow:0 4px 20px rgba(78,159,61,0.4)">Guardar resultado</button>
+        <button onClick="{{ closeResultModal }}" style="padding:13px 18px;border:1px solid rgba(255,255,255,0.12);border-radius:8px;background:transparent;color:rgba(233,216,180,0.45);font:600 13px system-ui;cursor:pointer" style-hover="background:rgba(255,255,255,0.04)">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- Finalize Modal -->
+<sc-if value="{{ showFinalizeModal }}">
+  <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease">
+    <div style="background:#1A2133;border:1px solid rgba(200,155,60,0.2);border-radius:14px;padding:32px;max-width:400px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
+      <div style="font-size:48px;margin-bottom:12px">🏆</div>
+      <h2 style="font:700 20px 'Cinzel',serif;color:#E9D8B4;margin:0 0 10px">Finalizar torneo</h2>
+      <p style="font:400 14px/1.5 'Crimson Text',serif;color:rgba(233,216,180,0.45);margin:0 0 24px">¿Querés finalizar este torneo? Podrás ver el podio y conservar los resultados.</p>
+      <div style="display:flex;gap:10px">
+        <button onClick="{{ confirmFinalize }}" style="flex:1;padding:13px;border:none;border-radius:8px;background:linear-gradient(135deg,#C89B3C,#A07D2E);color:#16120D;font:700 14px 'Cinzel',serif;cursor:pointer" style-hover="box-shadow:0 4px 20px rgba(200,155,60,0.4)">Finalizar</button>
+        <button onClick="{{ closeFinalizeModal }}" style="padding:13px 18px;border:1px solid rgba(255,255,255,0.12);border-radius:8px;background:transparent;color:rgba(233,216,180,0.45);font:600 13px system-ui;cursor:pointer" style-hover="background:rgba(255,255,255,0.04)">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- Delete Tournament Confirm -->
+<sc-if value="{{ showDeleteConfirm }}">
+  <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease">
+    <div style="background:#1A2133;border:1px solid rgba(183,65,52,0.25);border-radius:14px;padding:32px;max-width:380px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
+      <h2 style="font:700 18px 'Cinzel',serif;color:#E9D8B4;margin:0 0 10px">Eliminar torneo</h2>
+      <p style="font:400 14px/1.5 'Crimson Text',serif;color:rgba(233,216,180,0.45);margin:0 0 24px">Esta acción no se puede deshacer. ¿Estás seguro?</p>
+      <div style="display:flex;gap:10px">
+        <button onClick="{{ confirmDelete }}" style="flex:1;padding:13px;border:none;border-radius:8px;background:#B74134;color:#fff;font:700 13px system-ui;cursor:pointer" style-hover="background:#9E372D">Eliminar</button>
+        <button onClick="{{ closeDeleteConfirm }}" style="padding:13px 18px;border:1px solid rgba(255,255,255,0.12);border-radius:8px;background:transparent;color:rgba(233,216,180,0.45);font:600 13px system-ui;cursor:pointer" style-hover="background:rgba(255,255,255,0.04)">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- Player Delete Confirm -->
+<sc-if value="{{ showPlayerDeleteConfirm }}">
+  <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease">
+    <div style="background:#1A2133;border:1px solid rgba(183,65,52,0.25);border-radius:14px;padding:32px;max-width:380px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
+      <h2 style="font:700 18px 'Cinzel',serif;color:#E9D8B4;margin:0 0 10px">Eliminar jugador</h2>
+      <p style="font:400 14px/1.5 'Crimson Text',serif;color:rgba(233,216,180,0.45);margin:0 0 24px">Modificar jugadores puede regenerar el fixture y borrar resultados. ¿Continuar?</p>
+      <div style="display:flex;gap:10px">
+        <button onClick="{{ confirmPlayerDelete }}" style="flex:1;padding:13px;border:none;border-radius:8px;background:#B74134;color:#fff;font:700 13px system-ui;cursor:pointer" style-hover="background:#9E372D">Eliminar</button>
+        <button onClick="{{ closePlayerDeleteConfirm }}" style="padding:13px 18px;border:1px solid rgba(255,255,255,0.12);border-radius:8px;background:transparent;color:rgba(233,216,180,0.45);font:600 13px system-ui;cursor:pointer" style-hover="background:rgba(255,255,255,0.04)">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- Confetti -->
+{{ confettiOverlay }}
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;showDraftTips&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;section&quot;: &quot;Interfaz&quot; },
+  &quot;defaultFormat&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;bo3&quot;, &quot;bo1&quot;], &quot;default&quot;: &quot;bo3&quot;, &quot;section&quot;: &quot;Torneo&quot; },
+  &quot;defaultAllowDraws&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;section&quot;: &quot;Torneo&quot; }
+}">
+class Component extends DCLogic {
+  WUBRG = ['W', 'U', 'B', 'R', 'G'];
+  MANA_NAMES = { W: 'Blanco', U: 'Azul', B: 'Negro', R: 'Rojo', G: 'Verde' };
+  MANA_COLORS = {
+    W: { bg: '#F9FAF4', text: '#333', border: '#D4C9A8' },
+    U: { bg: '#0E68AB', text: '#fff', border: '#0A4F82' },
+    B: { bg: '#2B2027', text: '#C8B8C0', border: '#444' },
+    R: { bg: '#D3202A', text: '#fff', border: '#A01820' },
+    G: { bg: '#00733E', text: '#fff', border: '#005A30' }
+  };
+  TWO_COLOR = {
+    'WU': { name: 'Azorius', college: null },
+    'WB': { name: 'Orzhov', college: 'Silverquill', collegeName: 'Silverquill — Orzhov' },
+    'WR': { name: 'Boros', college: 'Lorehold', collegeName: 'Lorehold — Boros' },
+    'WG': { name: 'Selesnya', college: null },
+    'UB': { name: 'Dimir', college: null },
+    'UR': { name: 'Izzet', college: 'Prismari', collegeName: 'Prismari — Izzet' },
+    'UG': { name: 'Simic', college: 'Quandrix', collegeName: 'Quandrix — Simic' },
+    'BR': { name: 'Rakdos', college: null },
+    'BG': { name: 'Golgari', college: 'Witherbloom', collegeName: 'Witherbloom — Golgari' },
+    'RG': { name: 'Gruul', college: null }
+  };
+  THREE_COLOR = {
+    'WUB': 'Esper', 'UBR': 'Grixis', 'BRG': 'Jund',
+    'WRG': 'Naya', 'WUG': 'Bant', 'WBG': 'Abzan',
+    'WUR': 'Jeskai', 'UBG': 'Sultai', 'WBR': 'Mardu', 'URG': 'Temur'
+  };
+  FOUR_COLOR = {
+    'WUBR': 'Sin Verde', 'UBRG': 'Sin Blanco',
+    'WBRG': 'Sin Azul', 'WURG': 'Sin Negro', 'WUBG': 'Sin Rojo'
+  };
+  COLLEGE_THEMES = {
+    Silverquill: { accent: '#A8A8B0', bg: 'rgba(168,168,176,0.07)' },
+    Prismari: { accent: '#D3202A', bg: 'rgba(63,167,255,0.06)' },
+    Witherbloom: { accent: '#00733E', bg: 'rgba(0,115,62,0.06)' },
+    Lorehold: { accent: '#C89B3C', bg: 'rgba(200,155,60,0.06)' },
+    Quandrix: { accent: '#0E9AAB', bg: 'rgba(14,154,171,0.06)' }
+  };
+
+  state = {
+    tournaments: [],
+    view: 'dashboard',
+    currentTournamentId: null,
+    isMobile: false,
+    mobileTab: 'players',
+    showCreateModal: false,
+    showResultModal: false,
+    showFinalizeModal: false,
+    deleteConfirmId: null,
+    playerDeleteConfirmId: null,
+    showConfetti: false,
+    notification: null,
+    createForm: { name: '', description: '', format: 'bo3', allowDraws: false },
+    playerForm: { name: '', colors: [], notes: '', editingId: null },
+    resultForm: { matchId: null, winnerId: null, isDraw: false, gamesA: 0, gamesB: 0 }
+  };
+
+  componentDidMount() {
+    try {
+      const saved = localStorage.getItem('strixhaven-draft-tournaments');
+      if (saved) this.setState({ tournaments: JSON.parse(saved) });
+    } catch (e) { /* ignore */ }
+    this._checkMobile = () => {
+      const m = window.innerWidth < 900;
+      if (m !== this.state.isMobile) this.setState({ isMobile: m });
+    };
+    this._checkMobile();
+    window.addEventListener('resize', this._checkMobile);
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (prevState.tournaments !== this.state.tournaments) {
+      localStorage.setItem('strixhaven-draft-tournaments', JSON.stringify(this.state.tournaments));
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._checkMobile);
+  }
+
+  notify(text) {
+    this.setState({ notification: text });
+    clearTimeout(this._nt);
+    this._nt = setTimeout(() => this.setState({ notification: null }), 3000);
+  }
+
+  genId() {
+    return typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2, 11) + Date.now().toString(36);
+  }
+
+  getColorCombo(colors) {
+    const sorted = [...new Set(colors)].sort((a, b) => this.WUBRG.indexOf(a) - this.WUBRG.indexOf(b));
+    const key = sorted.join('');
+    if (!sorted.length) return { name: 'Sin colores definidos', college: null };
+    if (sorted.length === 1) return { name: 'Mono ' + this.MANA_NAMES[sorted[0]], college: null };
+    if (sorted.length === 2) {
+      const info = this.TWO_COLOR[key];
+      return info ? { name: info.collegeName || info.name, college: info.college } : { name: key, college: null };
+    }
+    if (sorted.length === 3) return { name: this.THREE_COLOR[key] || key, college: null };
+    if (sorted.length === 4) {
+      const n = this.FOUR_COLOR[key];
+      return { name: n ? 'Cuatro colores (' + n + ')' : key, college: null };
+    }
+    return { name: 'WUBRG — Cinco colores', college: null };
+  }
+
+  createTournament() {
+    const f = this.state.createForm;
+    if (!f.name.trim()) return;
+    const t = {
+      id: this.genId(), name: f.name.trim(), description: f.description.trim(),
+      host: 'Fernando Tuquina', status: 'drafting', format: f.format,
+      allowDraws: f.allowDraws, players: [], rounds: [],
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+    };
+    this.setState(s => ({
+      tournaments: [...s.tournaments, t], showCreateModal: false,
+      view: 'tournament', currentTournamentId: t.id, mobileTab: 'players'
+    }));
+    this.notify('Torneo creado exitosamente');
+  }
+
+  deleteTournament(id) {
+    this.setState(s => ({
+      tournaments: s.tournaments.filter(t => t.id !== id), deleteConfirmId: null,
+      view: s.currentTournamentId === id ? 'dashboard' : s.view,
+      currentTournamentId: s.currentTournamentId === id ? null : s.currentTournamentId
+    }));
+    this.notify('Torneo eliminado');
+  }
+
+  updateTournament(id, upd) {
+    this.setState(s => ({
+      tournaments: s.tournaments.map(t => t.id === id ? { ...t, ...upd, updatedAt: new Date().toISOString() } : t)
+    }));
+  }
+
+  addOrUpdatePlayer() {
+    const { playerForm: pf, currentTournamentId: cid } = this.state;
+    if (!pf.name.trim() || !cid) return;
+    const combo = this.getColorCombo(pf.colors);
+    const player = {
+      id: pf.editingId || this.genId(), name: pf.name.trim(),
+      colors: [...pf.colors], colorCombinationName: combo.name,
+      strixhavenCollegeName: combo.college, deckNotes: pf.notes.trim(),
+      createdAt: pf.editingId ? undefined : new Date().toISOString()
+    };
+    this.setState(s => {
+      const tour = s.tournaments.find(t => t.id === cid);
+      if (!tour) return {};
+      const players = pf.editingId
+        ? tour.players.map(p => p.id === pf.editingId ? { ...p, ...player, createdAt: p.createdAt } : p)
+        : [...tour.players, player];
+      return {
+        tournaments: s.tournaments.map(t => t.id === cid ? { ...t, players, updatedAt: new Date().toISOString() } : t),
+        playerForm: { name: '', colors: [], notes: '', editingId: null }
+      };
+    });
+    this.notify(pf.editingId ? 'Jugador actualizado' : 'Jugador agregado');
+  }
+
+  removePlayer(pid) {
+    this.setState(s => ({
+      tournaments: s.tournaments.map(t => t.id === s.currentTournamentId ? {
+        ...t, players: t.players.filter(p => p.id !== pid), rounds: [],
+        status: t.status === 'active' ? 'drafting' : t.status,
+        updatedAt: new Date().toISOString()
+      } : t),
+      playerDeleteConfirmId: null
+    }));
+    this.notify('Jugador eliminado — regenerá el fixture');
+  }
+
+  toggleColor(c) {
+    this.setState(s => ({
+      playerForm: { ...s.playerForm,
+        colors: s.playerForm.colors.includes(c) ? s.playerForm.colors.filter(x => x !== c) : [...s.playerForm.colors, c]
+      }
+    }));
+  }
+
+  generateSchedule() {
+    const tour = this.state.tournaments.find(t => t.id === this.state.currentTournamentId);
+    if (!tour || tour.players.length < 2) return;
+    const p = tour.players.map(x => x.id);
+    const parts = [...p];
+    if (parts.length % 2 !== 0) parts.push('BYE');
+    const n = parts.length;
+    const rounds = [];
+    for (let r = 0; r < n - 1; r++) {
+      const matches = [];
+      for (let i = 0; i < n / 2; i++) {
+        const a = parts[i], b = parts[n - 1 - i];
+        if (a === 'BYE' || b === 'BYE') {
+          matches.push({ id: this.genId(), roundNumber: r + 1, playerAId: a === 'BYE' ? b : a, playerBId: null, status: 'bye' });
+        } else {
+          matches.push({ id: this.genId(), roundNumber: r + 1, playerAId: a, playerBId: b, status: 'pending' });
+        }
+      }
+      rounds.push({ id: this.genId(), roundNumber: r + 1, matches });
+      const last = parts.pop();
+      parts.splice(1, 0, last);
+    }
+    this.updateTournament(this.state.currentTournamentId, { rounds, status: 'active' });
+    this.setState({ mobileTab: 'rounds' });
+    this.notify('Fixture generado — ¡a jugar!');
+  }
+
+  saveResult() {
+    const rf = this.state.resultForm;
+    if (!rf.matchId || (!rf.winnerId && !rf.isDraw)) return;
+    if (rf.gamesA + rf.gamesB <= 0 && !rf.isDraw) return;
+    this.setState(s => ({
+      tournaments: s.tournaments.map(t => {
+        if (t.id !== s.currentTournamentId) return t;
+        return { ...t,
+          rounds: t.rounds.map(round => ({ ...round,
+            matches: round.matches.map(m => m.id !== rf.matchId ? m : { ...m,
+              status: 'completed',
+              result: { winnerPlayerId: rf.isDraw ? null : rf.winnerId, isDraw: rf.isDraw, gamesPlayerA: rf.gamesA, gamesPlayerB: rf.gamesB }
+            })
+          })),
+          updatedAt: new Date().toISOString()
+        };
+      }),
+      showResultModal: false,
+      resultForm: { matchId: null, winnerId: null, isDraw: false, gamesA: 0, gamesB: 0 }
+    }));
+    this.notify('Resultado guardado');
+  }
+
+  calculateStandings(tour) {
+    if (!tour) return [];
+    const st = {};
+    tour.players.forEach(p => {
+      const c = this.getColorCombo(p.colors);
+      st[p.id] = { id: p.id, name: p.name, colors: [...p.colors], comboName: c.name, college: c.college, pj: 0, pg: 0, pe: 0, pp: 0, jg: 0, jp: 0, pts: 0 };
+    });
+    tour.rounds.forEach(round => {
+      round.matches.forEach(m => {
+        if (m.status !== 'completed' || !m.result) return;
+        const a = st[m.playerAId], b = m.playerBId ? st[m.playerBId] : null;
+        if (!a || !b) return;
+        const r = m.result;
+        a.pj++; b.pj++;
+        a.jg += r.gamesPlayerA; a.jp += r.gamesPlayerB;
+        b.jg += r.gamesPlayerB; b.jp += r.gamesPlayerA;
+        if (r.isDraw) { a.pe++; b.pe++; a.pts++; b.pts++; }
+        else if (r.winnerPlayerId === m.playerAId) { a.pg++; b.pp++; a.pts += 3; }
+        else { b.pg++; a.pp++; b.pts += 3; }
+      });
+    });
+    const arr = Object.values(st);
+    const getH2H = (x, y) => {
+      for (const round of tour.rounds) {
+        for (const m of round.matches) {
+          if (m.status !== 'completed' || !m.result) continue;
+          if ((m.playerAId === x && m.playerBId === y) || (m.playerAId === y && m.playerBId === x)) {
+            if (m.result.isDraw) return 0;
+            return m.result.winnerPlayerId === x ? -1 : 1;
+          }
+        }
+      }
+      return 0;
+    };
+    arr.sort((a, b) => {
+      if (b.pts !== a.pts) return b.pts - a.pts;
+      if (b.pg !== a.pg) return b.pg - a.pg;
+      const ap = a.jg + a.jp > 0 ? a.jg / (a.jg + a.jp) : 0;
+      const bp = b.jg + b.jp > 0 ? b.jg / (b.jg + b.jp) : 0;
+      if (Math.abs(bp - ap) > 0.001) return bp - ap;
+      if ((b.jg - b.jp) !== (a.jg - a.jp)) return (b.jg - b.jp) - (a.jg - a.jp);
+      const h = getH2H(a.id, b.id);
+      if (h !== 0) return h;
+      return a.name.localeCompare(b.name);
+    });
+    return arr.map((x, i) => ({ ...x, position: i + 1, diff: x.jg - x.jp }));
+  }
+
+  finalizeTournament() {
+    this.updateTournament(this.state.currentTournamentId, { status: 'finished', finalizedAt: new Date().toISOString() });
+    this.setState({ showFinalizeModal: false, showConfetti: true });
+    setTimeout(() => this.setState({ showConfetti: false }), 5000);
+    this.notify('¡Torneo finalizado!');
+  }
+
+  exportTournament() {
+    const t = this.state.tournaments.find(t => t.id === this.state.currentTournamentId);
+    if (!t) return;
+    const blob = new Blob([JSON.stringify(t, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = (t.name || 'torneo') + '.json'; a.click();
+    URL.revokeObjectURL(url);
+    this.notify('Torneo exportado');
+  }
+
+  importTournament(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const t = JSON.parse(e.target.result);
+        if (!t.name || !t.players) throw new Error('Invalid');
+        t.id = this.genId();
+        this.setState(s => ({ tournaments: [...s.tournaments, t] }));
+        this.notify('Torneo importado exitosamente');
+      } catch (err) { this.notify('Error al importar el torneo'); }
+    };
+    reader.readAsText(file);
+  }
+
+  copyStandings() {
+    const t = this.state.tournaments.find(t => t.id === this.state.currentTournamentId);
+    if (!t) return;
+    const standings = this.calculateStandings(t);
+    const lines = standings.map(s => s.position + '. ' + s.name + ' — ' + s.pts + ' pts (' + s.pg + 'V/' + s.pe + 'E/' + s.pp + 'D)');
+    const text = '📊 ' + t.name + '\n' + lines.join('\n') + '\n\nHosted by Fernando Tuquina';
+    navigator.clipboard.writeText(text).then(() => this.notify('Tabla copiada al portapapeles'));
+  }
+
+  getScoreOptions(format, rf, match) {
+    if (!match) return [];
+    const bo3 = format !== 'bo1';
+    const opts = [];
+    if (rf.winnerId) {
+      const wA = rf.winnerId === match.playerAId;
+      if (bo3) {
+        opts.push({ label: '2–0', gamesA: wA ? 2 : 0, gamesB: wA ? 0 : 2 });
+        opts.push({ label: '2–1', gamesA: wA ? 2 : 1, gamesB: wA ? 1 : 2 });
+      } else {
+        opts.push({ label: '1–0', gamesA: wA ? 1 : 0, gamesB: wA ? 0 : 1 });
+      }
+    } else if (rf.isDraw) {
+      if (bo3) opts.push({ label: '1–1', gamesA: 1, gamesB: 1 });
+      else opts.push({ label: '0–0', gamesA: 0, gamesB: 0 });
+    }
+    return opts.map(o => {
+      const sel = o.gamesA === rf.gamesA && o.gamesB === rf.gamesB;
+      return { ...o, selected: sel,
+        select: () => this.setState(s => ({ resultForm: { ...s.resultForm, gamesA: o.gamesA, gamesB: o.gamesB } })),
+        style: sel
+          ? 'padding:10px 20px;border-radius:8px;border:2px solid #C89B3C;background:rgba(200,155,60,0.15);color:#C89B3C;cursor:pointer;font:700 14px system-ui'
+          : 'padding:10px 20px;border-radius:8px;border:2px solid rgba(255,255,255,0.12);background:transparent;color:#E9D8B4;cursor:pointer;font:700 14px system-ui'
+      };
+    });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const showDraftTips = this.props.showDraftTips ?? true;
+    const cur = s.tournaments.find(t => t.id === s.currentTournamentId);
+    const activeTournaments = s.tournaments.filter(t => t.status === 'active');
+    const draftingTournaments = s.tournaments.filter(t => t.status === 'drafting');
+    const finishedTournaments = s.tournaments.filter(t => t.status === 'finished');
+
+    const standings = cur ? this.calculateStandings(cur) : [];
+    const leader = standings.length > 0 && standings[0].pts > 0 ? standings[0] : null;
+    const hasResults = !!(cur && cur.rounds.some(r => r.matches.some(m => m.status === 'completed')));
+    const hasRounds = (cur && cur.rounds.length > 0) || false;
+    const pc = cur ? cur.players.length : 0;
+    const tStatus = cur ? cur.status : 'drafting';
+    const statusLabels = { drafting: 'Preparación', active: 'Activo', finished: 'Finalizado' };
+
+    // Enriched players
+    const enrichedPlayers = (cur ? cur.players : []).map(p => {
+      const combo = this.getColorCombo(p.colors);
+      const theme = combo.college ? this.COLLEGE_THEMES[combo.college] : null;
+      return {
+        ...p, comboName: combo.name, college: combo.college,
+        cardStyle: theme
+          ? 'background:' + theme.bg + ';border:1px solid ' + theme.accent + ';border-left:4px solid ' + theme.accent + ';border-radius:8px;padding:14px;animation:fadeIn 0.3s ease'
+          : 'background:rgba(255,255,255,0.025);border:1px solid rgba(200,155,60,0.1);border-radius:8px;padding:14px;animation:fadeIn 0.3s ease',
+        colorBadges: p.colors.map(c => ({
+          letter: c,
+          style: 'display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:11px;font-weight:700;font-family:system-ui;background:' + this.MANA_COLORS[c].bg + ';color:' + this.MANA_COLORS[c].text + ';border:1px solid ' + this.MANA_COLORS[c].border
+        })),
+        edit: () => this.setState({ playerForm: { name: p.name, colors: [...p.colors], notes: p.deckNotes || '', editingId: p.id } }),
+        remove: () => this.setState({ playerDeleteConfirmId: p.id })
+      };
+    });
+
+    // Tournament cards helper
+    const enrichCard = (t) => {
+      const st2 = this.calculateStandings(t);
+      const ldr = st2.length > 0 && st2[0].pts > 0 ? st2[0].name : null;
+      return {
+        ...t, leader: ldr, playerCount: t.players.length, roundCount: t.rounds.length,
+        createdDate: new Date(t.createdAt).toLocaleDateString('es-AR'),
+        open: () => this.setState({ view: 'tournament', currentTournamentId: t.id, mobileTab: 'players' }),
+        confirmDelete: () => this.setState({ deleteConfirmId: t.id })
+      };
+    };
+
+    // Rounds display
+    const roundsDisplay = (cur ? cur.rounds : []).map(round => ({
+      ...round, number: round.roundNumber,
+      matches: round.matches.map(m => {
+        const pA = cur.players.find(p => p.id === m.playerAId);
+        const pB = m.playerBId ? cur.players.find(p => p.id === m.playerBId) : null;
+        const isBye = m.status === 'bye';
+        const isComp = m.status === 'completed';
+        let resultText = 'Pendiente';
+        if (isComp && m.result) {
+          if (m.result.isDraw) resultText = 'Empate ' + m.result.gamesPlayerA + '–' + m.result.gamesPlayerB;
+          else {
+            const w = cur.players.find(p => p.id === m.result.winnerPlayerId);
+            resultText = (w ? w.name : '?') + ' ganó ' + m.result.gamesPlayerA + '–' + m.result.gamesPlayerB;
+          }
+        }
+        const openResult = () => this.setState({
+          showResultModal: true,
+          resultForm: { matchId: m.id, winnerId: m.result ? m.result.winnerPlayerId : null, isDraw: m.result ? m.result.isDraw : false, gamesA: m.result ? m.result.gamesPlayerA : 0, gamesB: m.result ? m.result.gamesPlayerB : 0 }
+        });
+        return {
+          id: m.id, isBye, isMatch: !isBye, isCompleted: isComp, isPending: m.status === 'pending',
+          byePlayer: pA ? pA.name : '', playerAName: pA ? pA.name : '', playerBName: pB ? pB.name : '',
+          resultText, enterResult: openResult, editResult: openResult
+        };
+      })
+    }));
+
+    // Color chips
+    const colorChips = this.WUBRG.map(c => {
+      const sel = s.playerForm.colors.includes(c);
+      const mc = this.MANA_COLORS[c];
+      return {
+        letter: c, name: this.MANA_NAMES[c], selected: sel,
+        style: sel
+          ? 'display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:20px;border:2px solid ' + mc.border + ';background:' + mc.bg + ';color:' + mc.text + ';cursor:pointer;font:600 12px system-ui;box-shadow:0 0 10px ' + mc.bg + '40'
+          : 'display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:20px;border:2px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:rgba(233,216,180,0.45);cursor:pointer;font:600 12px system-ui',
+        toggle: () => this.toggleColor(c)
+      };
+    });
+
+    const formCombo = this.getColorCombo(s.playerForm.colors);
+
+    // Result modal
+    let resultMatch = null, resultPlayerA = '', resultPlayerB = '';
+    if (s.showResultModal && s.resultForm.matchId && cur) {
+      resultMatch = cur.rounds.flatMap(r => r.matches).find(m => m.id === s.resultForm.matchId) || null;
+      if (resultMatch) {
+        resultPlayerA = (cur.players.find(p => p.id === resultMatch.playerAId) || {}).name || '';
+        resultPlayerB = (cur.players.find(p => p.id === resultMatch.playerBId) || {}).name || '';
+      }
+    }
+
+    const scoreOptions = this.getScoreOptions(cur ? cur.format : 'bo3', s.resultForm, resultMatch);
+
+    // Standings styled
+    const styledStandings = standings.map((row, i) => {
+      let border = 'transparent';
+      if (i === 0 && row.pts > 0) border = '#C89B3C';
+      else if (i === 1 && row.pts > 0) border = '#C0C0C0';
+      else if (i === 2 && row.pts > 0) border = '#CD7F32';
+      return { ...row, diff: row.jg - row.jp, rowStyle: 'border-left:3px solid ' + border };
+    });
+
+    const podium = standings.slice(0, 3).map((p, i) => {
+      const medals = ['🥇', '🥈', '🥉'];
+      const colors = ['#C89B3C', '#C0C0C0', '#CD7F32'];
+      return { ...p, medal: medals[i], podiumColor: colors[i] };
+    });
+
+    let playerCountMsg = '';
+    if (pc > 0 && pc < 5) playerCountMsg = 'Se puede jugar, pero para draft suele ser más divertido con 5, 6 u 8 personas.';
+    else if (pc === 5) playerCountMsg = 'Formato recomendado: round robin con una persona libre por ronda.';
+    else if (pc === 6) playerCountMsg = 'Buen número para un draft casual.';
+    else if (pc === 8) playerCountMsg = '¡Pod clásico ideal para draft!';
+
+    let confettiOverlay = null;
+    if (s.showConfetti) {
+      const cc = ['#C89B3C', '#3FA7FF', '#9D6BFF', '#4E9F3D', '#D3202A', '#E9D8B4'];
+      confettiOverlay = React.createElement('div', { style: { position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'none', overflow: 'hidden' } },
+        Array.from({ length: 60 }, (_, i) => React.createElement('div', { key: i, style: {
+          position: 'absolute', left: (Math.random() * 100) + '%', top: '-20px',
+          width: (6 + Math.random() * 10) + 'px', height: (6 + Math.random() * 10) + 'px',
+          backgroundColor: cc[i % cc.length],
+          animation: 'confettiFall ' + (2 + Math.random() * 3) + 's ease-in ' + (Math.random() * 2) + 's forwards',
+          borderRadius: Math.random() > 0.5 ? '50%' : '2px'
+        }}))
+      );
+    }
+
+    const resultValid = (s.resultForm.winnerId || s.resultForm.isDraw) && (s.resultForm.gamesA + s.resultForm.gamesB > 0 || s.resultForm.isDraw);
+
+    const selStyle = 'flex:1;padding:12px;border-radius:8px;border:2px solid #C89B3C;background:rgba(200,155,60,0.15);color:#C89B3C;cursor:pointer;font:600 14px \'Cinzel\',serif';
+    const unselStyle = 'flex:1;padding:12px;border-radius:8px;border:2px solid rgba(255,255,255,0.12);background:transparent;color:#E9D8B4;cursor:pointer;font:600 14px \'Cinzel\',serif';
+    const formatSelStyle = 'padding:9px 16px;border-radius:8px;border:2px solid #C89B3C;background:rgba(200,155,60,0.12);color:#C89B3C;cursor:pointer;font:600 12px system-ui';
+    const formatUnselStyle = 'padding:9px 16px;border-radius:8px;border:2px solid rgba(255,255,255,0.12);background:transparent;color:rgba(233,216,180,0.45);cursor:pointer;font:600 12px system-ui';
+    const tabSel = 'flex:1;padding:12px;border:none;border-bottom:2px solid #C89B3C;background:transparent;color:#C89B3C;font:600 13px system-ui;cursor:pointer';
+    const tabUnsel = 'flex:1;padding:12px;border:none;border-bottom:2px solid transparent;background:transparent;color:rgba(233,216,180,0.4);font:600 13px system-ui;cursor:pointer';
+
+    return {
+      isDashboard: s.view === 'dashboard', isTournament: s.view === 'tournament',
+      goToDashboard: () => this.setState({ view: 'dashboard', currentTournamentId: null }),
+      isMobile: s.isMobile, isDesktop: !s.isMobile,
+      showPlayers: !s.isMobile || s.mobileTab === 'players',
+      showRounds: !s.isMobile || s.mobileTab === 'rounds',
+      showStandings: !s.isMobile || s.mobileTab === 'standings',
+      setPlayersTab: () => this.setState({ mobileTab: 'players' }),
+      setRoundsTab: () => this.setState({ mobileTab: 'rounds' }),
+      setStandingsTab: () => this.setState({ mobileTab: 'standings' }),
+      playersTabStyle: s.mobileTab === 'players' ? tabSel : tabUnsel,
+      roundsTabStyle: s.mobileTab === 'rounds' ? tabSel : tabUnsel,
+      standingsTabStyle: s.mobileTab === 'standings' ? tabSel : tabUnsel,
+
+      activeTournaments: activeTournaments.map(enrichCard),
+      draftingTournaments: draftingTournaments.map(enrichCard),
+      finishedTournaments: finishedTournaments.map(enrichCard),
+      hasTournaments: s.tournaments.length > 0, noTournaments: s.tournaments.length === 0,
+      hasActive: activeTournaments.length > 0, hasDrafting: draftingTournaments.length > 0,
+      hasFinished: finishedTournaments.length > 0,
+      showDraftTips,
+
+      showCreateModal: s.showCreateModal,
+      openCreateModal: () => this.setState({ showCreateModal: true, createForm: { name: 'Draft de Strixhaven #' + (s.tournaments.length + 1), description: '', format: this.props.defaultFormat || 'bo3', allowDraws: this.props.defaultAllowDraws || false } }),
+      closeCreateModal: () => this.setState({ showCreateModal: false }),
+      createFormName: s.createForm.name, createFormDesc: s.createForm.description,
+      handleCreateName: (e) => this.setState(st => ({ createForm: { ...st.createForm, name: e.target.value } })),
+      handleCreateDesc: (e) => this.setState(st => ({ createForm: { ...st.createForm, description: e.target.value } })),
+      toggleBo3: () => this.setState(st => ({ createForm: { ...st.createForm, format: 'bo3' } })),
+      toggleBo1: () => this.setState(st => ({ createForm: { ...st.createForm, format: 'bo1' } })),
+      bo3Style: s.createForm.format === 'bo3' ? formatSelStyle : formatUnselStyle,
+      bo1Style: s.createForm.format === 'bo1' ? formatSelStyle : formatUnselStyle,
+      toggleDraws: () => this.setState(st => ({ createForm: { ...st.createForm, allowDraws: !st.createForm.allowDraws } })),
+      drawsToggleStyle: s.createForm.allowDraws
+        ? 'padding:6px 14px;border-radius:6px;border:2px solid #C89B3C;background:rgba(200,155,60,0.12);color:#C89B3C;cursor:pointer;font:600 12px system-ui'
+        : 'padding:6px 14px;border-radius:6px;border:2px solid rgba(255,255,255,0.12);background:transparent;color:rgba(233,216,180,0.4);cursor:pointer;font:600 12px system-ui',
+      drawsLabel: s.createForm.allowDraws ? 'Activado' : 'Desactivado',
+      createTournament: () => this.createTournament(),
+
+      tournamentName: cur ? cur.name : '', tournamentStatusLabel: statusLabels[tStatus] || '',
+      playerCount: pc, isFinished: tStatus === 'finished', isDrafting: tStatus === 'drafting',
+      isActive: tStatus === 'active', isActiveOrDrafting: tStatus !== 'finished',
+      hasPodium: podium.length > 0 && tStatus === 'finished' && standings[0] && standings[0].pts > 0,
+      podium, championName: podium[0] ? podium[0].name : '', championCombo: podium[0] ? podium[0].comboName : '',
+      openFinalizeModal: () => this.setState({ showFinalizeModal: true }),
+      reopenTournament: () => { this.updateTournament(s.currentTournamentId, { status: 'active', finalizedAt: undefined }); this.notify('Torneo reabierto'); },
+      exportTournament: () => this.exportTournament(),
+      triggerImport: () => { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json'; inp.onchange = (e) => { if (e.target.files && e.target.files[0]) this.importTournament(e.target.files[0]); }; inp.click(); },
+
+      detailLayoutStyle: s.isMobile
+        ? 'display:flex;flex-direction:column;gap:20px;padding:16px'
+        : 'display:grid;grid-template-columns:340px 1fr 360px;gap:24px;padding:24px 32px;max-width:1440px;margin:0 auto',
+
+      enrichedPlayers, colorChips,
+      formHasColors: s.playerForm.colors.length > 0, formComboName: formCombo.name,
+      playerFormName: s.playerForm.name, playerFormNotes: s.playerForm.notes,
+      isEditingPlayer: !!s.playerForm.editingId,
+      savePlayerLabel: s.playerForm.editingId ? 'Actualizar jugador' : 'Agregar jugador',
+      handlePlayerName: (e) => this.setState(st => ({ playerForm: { ...st.playerForm, name: e.target.value } })),
+      handlePlayerNotes: (e) => this.setState(st => ({ playerForm: { ...st.playerForm, notes: e.target.value } })),
+      savePlayer: () => this.addOrUpdatePlayer(),
+      cancelEdit: () => this.setState({ playerForm: { name: '', colors: [], notes: '', editingId: null } }),
+      hasPlayerCountMsg: playerCountMsg.length > 0, playerCountMsg,
+      hasPlayers: pc > 0, noPlayers: pc === 0,
+      showGenerateBtn: pc >= 2 && tStatus === 'drafting',
+      generateSchedule: () => this.generateSchedule(),
+      canRegenerate: hasRounds && !hasResults,
+      regenerateSchedule: () => this.generateSchedule(),
+
+      roundsDisplay, hasRounds, noRounds: !hasRounds,
+      standings: styledStandings, currentLeader: leader, leaderName: leader ? leader.name : '', leaderPts: leader ? leader.pts : 0,
+      hasStandings: styledStandings.length > 0 && hasResults, noStandings: !hasResults, hasResults,
+      copyStandings: () => this.copyStandings(),
+
+      showResultModal: s.showResultModal, closeResultModal: () => this.setState({ showResultModal: false }),
+      resultPlayerA, resultPlayerB, allowDraws: cur ? cur.allowDraws : false,
+      selectWinnerA: () => { if (resultMatch) this.setState(st => ({ resultForm: { ...st.resultForm, winnerId: resultMatch.playerAId, isDraw: false, gamesA: 0, gamesB: 0 } })); },
+      selectWinnerB: () => { if (resultMatch) this.setState(st => ({ resultForm: { ...st.resultForm, winnerId: resultMatch.playerBId, isDraw: false, gamesA: 0, gamesB: 0 } })); },
+      selectDraw: () => this.setState(st => ({ resultForm: { ...st.resultForm, winnerId: null, isDraw: true, gamesA: 0, gamesB: 0 } })),
+      winnerAStyle: s.resultForm.winnerId && resultMatch && s.resultForm.winnerId === resultMatch.playerAId ? selStyle : unselStyle,
+      winnerBStyle: s.resultForm.winnerId && resultMatch && s.resultForm.winnerId === resultMatch.playerBId ? selStyle : unselStyle,
+      drawBtnStyle: s.resultForm.isDraw
+        ? 'width:100%;padding:12px;border-radius:8px;border:2px solid #C89B3C;background:rgba(200,155,60,0.15);color:#C89B3C;cursor:pointer;font:600 14px \'Cinzel\',serif'
+        : 'width:100%;padding:12px;border-radius:8px;border:2px solid rgba(255,255,255,0.12);background:transparent;color:#E9D8B4;cursor:pointer;font:600 14px \'Cinzel\',serif',
+      hasScoreOptions: scoreOptions.length > 0, scoreOptions,
+      saveResult: () => this.saveResult(),
+      saveResultOpacity: resultValid ? '1' : '0.4',
+
+      showFinalizeModal: s.showFinalizeModal, closeFinalizeModal: () => this.setState({ showFinalizeModal: false }),
+      confirmFinalize: () => this.finalizeTournament(),
+      showDeleteConfirm: !!s.deleteConfirmId, closeDeleteConfirm: () => this.setState({ deleteConfirmId: null }),
+      confirmDelete: () => this.deleteTournament(s.deleteConfirmId),
+      showPlayerDeleteConfirm: !!s.playerDeleteConfirmId, closePlayerDeleteConfirm: () => this.setState({ playerDeleteConfirmId: null }),
+      confirmPlayerDelete: () => this.removePlayer(s.playerDeleteConfirmId),
+
+      notification: s.notification, notificationText: s.notification || '',
+      confettiOverlay
+    };
+  }
+}
+</script>
+</body>
+</html>
