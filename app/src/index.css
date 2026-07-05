@@ -98,63 +98,82 @@
   }
 }
 
-@keyframes orbFloat1 {
+/* Orb lifecycle: fade in from nothing, drift, fade back out to nothing —
+   real zero-opacity holds at both ends so orbs actually disappear rather
+   than just dim, and staggered per-orb delays keep only a few visible
+   at any given moment instead of all of them glowing at once. */
+@keyframes orbLife1 {
   0%,
+  8%,
   100% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.35;
+    opacity: 0;
+    transform: translate(0, 0) scale(0.7);
   }
   25% {
-    transform: translate(35px, -55px) scale(1.2);
-    opacity: 0.55;
+    opacity: 0.3;
+    transform: translate(18px, -25px) scale(1);
   }
   50% {
-    transform: translate(-25px, -85px) scale(0.85);
-    opacity: 0.25;
+    opacity: 0.34;
+    transform: translate(32px, -50px) scale(1.05);
   }
   75% {
-    transform: translate(45px, -30px) scale(1.1);
-    opacity: 0.5;
+    opacity: 0.16;
+    transform: translate(18px, -75px) scale(0.9);
+  }
+  92% {
+    opacity: 0;
+    transform: translate(4px, -90px) scale(0.75);
   }
 }
 
-@keyframes orbFloat2 {
+@keyframes orbLife2 {
   0%,
+  8%,
   100% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.3;
+    opacity: 0;
+    transform: translate(0, 0) scale(0.7);
   }
-  33% {
-    transform: translate(-50px, -65px) scale(1.25);
-    opacity: 0.55;
+  25% {
+    opacity: 0.28;
+    transform: translate(-22px, -30px) scale(1);
   }
-  66% {
-    transform: translate(30px, -40px) scale(0.8);
-    opacity: 0.2;
+  50% {
+    opacity: 0.32;
+    transform: translate(-38px, -55px) scale(1.05);
+  }
+  75% {
+    opacity: 0.14;
+    transform: translate(-18px, -78px) scale(0.88);
+  }
+  92% {
+    opacity: 0;
+    transform: translate(-4px, -90px) scale(0.75);
   }
 }
 
-@keyframes orbFloat3 {
+@keyframes orbLife3 {
   0%,
+  8%,
   100% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.25;
+    opacity: 0;
+    transform: translate(0, 0) scale(0.7);
   }
-  20% {
-    transform: translate(55px, -20px) scale(1.1);
-    opacity: 0.45;
+  22% {
+    opacity: 0.26;
+    transform: translate(25px, -12px) scale(1);
   }
-  40% {
-    transform: translate(-35px, -70px) scale(1.2);
-    opacity: 0.35;
+  48% {
+    opacity: 0.32;
+    transform: translate(12px, -42px) scale(1.05);
   }
-  60% {
-    transform: translate(15px, -95px) scale(0.85);
-    opacity: 0.5;
+  72% {
+    opacity: 0.18;
+    transform: translate(-14px, -62px) scale(0.9);
   }
-  80% {
-    transform: translate(-45px, -35px) scale(1.15);
-    opacity: 0.3;
+  92% {
+    opacity: 0;
+    transform: translate(-26px, -80px) scale(0.75);
   }
 }
 

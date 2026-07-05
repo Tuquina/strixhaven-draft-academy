@@ -9,10 +9,20 @@ const COLORS = [
   "rgba(60, 210, 100, 1)", // green
 ];
 
-const FLOAT_KEYFRAMES = ["orbFloat1", "orbFloat2", "orbFloat3"];
+const LIFE_KEYFRAMES = ["orbLife1", "orbLife2", "orbLife3"];
 
 function randomBetween(min: number, max: number): number {
   return min + Math.random() * (max - min);
+}
+
+// Bias toward the screen border on one axis so orbs drift around the
+// edges rather than cluttering the center of the page.
+function edgeBiasedPosition(): { top: number; left: number } {
+  const edge = Math.floor(Math.random() * 4);
+  if (edge === 0) return { top: randomBetween(0, 12), left: randomBetween(0, 100) };
+  if (edge === 1) return { top: randomBetween(88, 100), left: randomBetween(0, 100) };
+  if (edge === 2) return { top: randomBetween(0, 100), left: randomBetween(0, 12) };
+  return { top: randomBetween(0, 100), left: randomBetween(88, 100) };
 }
 
 interface Orb {
@@ -26,24 +36,24 @@ interface Orb {
 
 function generateOrbs(count: number): Orb[] {
   return Array.from({ length: count }, (_, i) => {
-    const size = randomBetween(22, 52);
-    const duration = randomBetween(9, 20);
-    const delay = randomBetween(0, 14);
-    const direction = Math.random() < 0.5 ? " reverse" : "";
-    const keyframe = FLOAT_KEYFRAMES[i % FLOAT_KEYFRAMES.length];
+    const size = randomBetween(14, 32);
+    const duration = randomBetween(14, 28);
+    const delay = randomBetween(0, 22);
+    const keyframe = LIFE_KEYFRAMES[i % LIFE_KEYFRAMES.length];
+    const { top, left } = edgeBiasedPosition();
     return {
       size,
       blur: size * 0.3,
       color: COLORS[i % COLORS.length],
-      top: `${randomBetween(2, 92)}%`,
-      left: `${randomBetween(2, 92)}%`,
-      animation: `${keyframe} ${duration}s ease-in-out ${delay}s infinite${direction}`,
+      top: `${top}%`,
+      left: `${left}%`,
+      animation: `${keyframe} ${duration}s ease-in-out ${delay}s infinite`,
     };
   });
 }
 
 export function FloatingOrbs() {
-  const orbs = useMemo(() => generateOrbs(10), []);
+  const orbs = useMemo(() => generateOrbs(6), []);
 
   return (
     <>
@@ -57,8 +67,8 @@ export function FloatingOrbs() {
             height: orb.size,
             top: orb.top,
             left: orb.left,
-            background: `radial-gradient(circle, rgba(255,255,255,0.9) 0%, ${orb.color} 30%, transparent 72%)`,
-            boxShadow: `0 0 ${orb.size * 0.8}px ${orb.color}`,
+            background: `radial-gradient(circle, rgba(255,255,255,0.85) 0%, ${orb.color} 30%, transparent 72%)`,
+            boxShadow: `0 0 ${orb.size * 0.6}px ${orb.color}`,
             filter: `blur(${orb.blur}px)`,
             animation: orb.animation,
             zIndex: 0,
