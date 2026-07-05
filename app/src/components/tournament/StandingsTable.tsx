@@ -1,5 +1,7 @@
+import { useState } from "react";
 import type { Tournament } from "../../types";
 import { calculateStandings, formatStandingsClipboardText } from "../../lib/standings";
+import { generateTournamentRecapImage, shareOrDownloadImage } from "../../lib/tournamentImage";
 import { Button } from "../shared/Button";
 
 const RANK_BORDER = ["#C89B3C", "#C0C0C0", "#CD7F32"];
@@ -13,11 +15,26 @@ interface StandingsTableProps {
 export function StandingsTable({ tournament, hasResults, notify }: StandingsTableProps) {
   const standings = calculateStandings(tournament);
   const leader = standings.length > 0 && standings[0].pts > 0 ? standings[0] : null;
+  const [generatingImage, setGeneratingImage] = useState(false);
 
   const copyStandings = async () => {
     const text = formatStandingsClipboardText(tournament.name, standings);
     await navigator.clipboard.writeText(text);
     notify("Tabla copiada al portapapeles");
+  };
+
+  const shareImage = async () => {
+    setGeneratingImage(true);
+    try {
+      const blob = await generateTournamentRecapImage(tournament);
+      const filename = `${tournament.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-recap.png`;
+      const result = await shareOrDownloadImage(blob, filename, tournament.name);
+      notify(result === "shared" ? "Imagen compartida" : "Imagen descargada — ¡listo para compartir!");
+    } catch {
+      notify("No se pudo generar la imagen");
+    } finally {
+      setGeneratingImage(false);
+    }
   };
 
   return (
@@ -41,8 +58,7 @@ export function StandingsTable({ tournament, hasResults, notify }: StandingsTabl
       )}
 
       {hasResults && standings.length > 0 && (
-        <>
-          <div className="overflow-x-auto rounded-lg border border-gold/8">
+        <div className="overflow-x-auto rounded-lg border border-gold/8">
             <table className="w-full min-w-[560px] border-collapse font-sans text-xs">
               <thead>
                 <tr className="bg-gold/6">
@@ -82,14 +98,24 @@ export function StandingsTable({ tournament, hasResults, notify }: StandingsTabl
                 ))}
               </tbody>
             </table>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" className="px-3.5 py-2.5 text-xs" onClick={copyStandings}>
-              Copiar tabla
-            </Button>
-          </div>
-        </>
+        </div>
       )}
+
+      <div className="flex flex-wrap gap-2">
+        {hasResults && standings.length > 0 && (
+          <Button variant="secondary" className="px-3.5 py-2.5 text-xs" onClick={copyStandings}>
+            Copiar tabla
+          </Button>
+        )}
+        <Button
+          variant="secondary"
+          className="px-3.5 py-2.5 text-xs"
+          onClick={shareImage}
+          disabled={generatingImage}
+        >
+          {generatingImage ? "Generando imagen…" : "🖼️ Compartir imagen"}
+        </Button>
+      </div>
     </div>
   );
 }

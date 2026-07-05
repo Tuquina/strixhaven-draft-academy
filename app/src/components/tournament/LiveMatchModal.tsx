@@ -3,7 +3,7 @@ import type { MatchFormat, MatchResult } from "../../types";
 import { genId } from "../../lib/id";
 import { playAlarmBeep } from "../../lib/timerSound";
 import { Modal } from "../shared/Modal";
-import { MatchTimerModal } from "../shared/MatchTimerModal";
+import { MatchTimerPanel } from "../shared/MatchTimerPanel";
 
 interface LiveMatchModalProps {
   playerAId: string;
@@ -147,8 +147,7 @@ export function LiveMatchModal({
   };
 
   return (
-    <>
-      <Modal onClose={onClose} maxWidth="640px">
+    <Modal onClose={onClose} maxWidth="640px">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <h2 className="m-0 font-heading text-xl font-bold text-parchment">⚔️ Comenzar partida</h2>
           <span className="rounded bg-gold/10 px-2 py-1 font-sans text-[11px] font-bold uppercase tracking-wide text-gold">
@@ -241,12 +240,18 @@ export function LiveMatchModal({
               })}
             </div>
 
+            {showTimer && (
+              <div className="mt-5 rounded-xl border border-gold/15 bg-black/20 p-4">
+                <MatchTimerPanel playerAName={playerAName} playerBName={playerBName} />
+              </div>
+            )}
+
             <div className="mt-5 flex flex-wrap gap-2.5">
               <button
-                onClick={() => setShowTimer(true)}
+                onClick={() => setShowTimer((v) => !v)}
                 className="cursor-pointer rounded-lg border border-gold/25 bg-gold/8 px-4 py-2.5 font-sans text-sm font-semibold text-gold hover:bg-gold/15"
               >
-                ⏱ Agregar cronómetro
+                {showTimer ? "⏱ Ocultar cronómetro" : "⏱ Agregar cronómetro"}
               </button>
               {allowDraws && (
                 <button
@@ -271,11 +276,6 @@ export function LiveMatchModal({
             </div>
           </>
         )}
-      </Modal>
-
-      {showTimer && (
-        <MatchTimerModal playerAName={playerAName} playerBName={playerBName} onClose={() => setShowTimer(false)} />
-      )}
-    </>
+    </Modal>
   );
 }
