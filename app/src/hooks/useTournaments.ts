@@ -3,12 +3,21 @@ import { genId } from "../lib/id";
 import { getColorCombo } from "../lib/colors";
 import { generateRoundRobin } from "../lib/schedule";
 import { loadTournaments, saveTournaments } from "../lib/storage";
+import {
+  deleteCloudTournament,
+  fetchCloudTournaments,
+  isCloudConfigured,
+  mergeTournaments,
+  pushTournament,
+} from "../lib/cloudSync";
 import type {
   ManaColor,
   MatchFormat,
   MatchResult,
   Tournament,
 } from "../types";
+
+export type SyncStatus = "disabled" | "syncing" | "synced" | "offline";
 
 export interface CreateTournamentInput {
   name: string;
@@ -28,6 +37,9 @@ export function useTournaments() {
   const [tournaments, setTournaments] = useState<Tournament[]>(() =>
     loadTournaments()
   );
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>(
+    isCloudConfigured() ? "syncing" : "disabled"
+  );
   const isFirstRun = useRef(true);
 
   useEffect(() => {
@@ -37,7 +49,33 @@ export function useTournaments() {
       return;
     }
     saveTournaments(tournaments);
+
+    if (!isCloudConfigured()) return;
+    setSyncStatus("syncing");
+    Promise.all(tournaments.map((t) => pushTournament(t))).then((results) => {
+      setSyncStatus(results.every(Boolean) ? "synced" : "offline");
+    });
   }, [tournaments]);
+
+  // One-time reconcile with the cloud on load: local storage is shown
+  // immediately, then merged with whatever the cloud has (last-write-wins
+  // per tournament) as soon as it's reachable.
+  useEffect(() => {
+    if (!isCloudConfigured()) return;
+    let cancelled = false;
+    fetchCloudTournaments().then((cloud) => {
+      if (cancelled) return;
+      if (cloud === null) {
+        setSyncStatus("offline");
+        return;
+      }
+      setTournaments((local) => mergeTournaments(local, cloud));
+      setSyncStatus("synced");
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const updateTournament = useCallback(
     (id: string, updater: (t: Tournament) => Tournament) => {
@@ -74,6 +112,7 @@ export function useTournaments() {
 
   const deleteTournament = useCallback((id: string) => {
     setTournaments((all) => all.filter((t) => t.id !== id));
+    void deleteCloudTournament(id);
   }, []);
 
   const addOrUpdatePlayer = useCallback(
@@ -215,6 +254,7 @@ export function useTournaments() {
 
   return {
     tournaments,
+    syncStatus,
     createTournament,
     deleteTournament,
     updateTournament,

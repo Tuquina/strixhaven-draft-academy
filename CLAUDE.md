@@ -26,14 +26,32 @@ read-only unless the user explicitly asks to update the design bundle itself.
 ## Working in `app/`
 
 - Stack: React 19, TypeScript, Vite, Tailwind CSS v4, oxlint.
-- State/persistence: tournaments are managed client-side via `src/hooks/useTournaments.ts`
-  and persisted through `src/lib/storage.ts` (local-first, no backend).
+- State/persistence: tournaments are managed client-side via `src/hooks/useTournaments.ts`.
+  `localStorage` (via `src/lib/storage.ts`) is always the source of truth and works fully
+  offline; Supabase (via `src/lib/supabaseClient.ts` and `src/lib/cloudSync.ts`) is an
+  optional sync layer on top — see "Cloud sync (Supabase)" below.
 - Key domain types live in `src/types.ts` (`Tournament`, `Player`, `Round`, `Match`, ...).
 - Structure: `src/components/dashboard` (tournament list/creation), `src/components/tournament`
   (in-tournament views: roster, schedule, standings, results), `src/components/shared`
   (generic UI primitives).
 - Scheduling/standings/color logic is isolated in `src/lib/` (`rounds.ts`, `schedule.ts`,
   `standings.ts`, `colors.ts`) — keep pairing/scoring logic there, not in components.
+
+### Cloud sync (Supabase)
+
+- Project: `strixhaven-draft-academy` (org `Fernando-Personal`, region `sa-east-1`).
+- Single table `public.tournaments` (`id text primary key`, `data jsonb`, `updated_at timestamptz`)
+  — each row is one tournament stored whole as JSON, keyed by the same id the client generates.
+  RLS is enabled with a permissive `anon` policy (no auth system in this app); don't copy that
+  policy pattern onto a table with sensitive data.
+- `src/lib/supabaseClient.ts` builds the client from `VITE_SUPABASE_URL` /
+  `VITE_SUPABASE_ANON_KEY` (see `.env.example`); if either is missing, `supabase` is `null` and
+  the app runs local-only.
+- `src/lib/cloudSync.ts` has the fetch/upsert/delete helpers plus `mergeTournaments`
+  (last-write-wins per tournament by `updatedAt`), used once on load to reconcile local vs. cloud.
+- `useTournaments` writes to `localStorage` synchronously on every change (never blocked by the
+  network) and separately fires cloud upserts/deletes, exposing a `syncStatus`
+  (`disabled | syncing | synced | offline`) shown in the dashboard header.
 
 ### Commands (run from `app/`)
 

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import type { Tournament } from "../../types";
-import type { CreateTournamentInput } from "../../hooks/useTournaments";
+import type { CreateTournamentInput, SyncStatus } from "../../hooks/useTournaments";
 import { calculateStandings } from "../../lib/standings";
 import { TournamentCard } from "./TournamentCard";
 import { CreateTournamentModal } from "./CreateTournamentModal";
@@ -10,12 +10,20 @@ import { Button } from "../shared/Button";
 
 interface TournamentDashboardProps {
   tournaments: Tournament[];
+  syncStatus: SyncStatus;
   onOpenTournament: (id: string) => void;
   onCreateTournament: (input: CreateTournamentInput) => string;
   onDeleteTournament: (id: string) => void;
   onImportTournament: (file: File) => Promise<boolean>;
   notify: (text: string) => void;
 }
+
+const SYNC_STATUS_INFO: Record<SyncStatus, { label: string; dotClass: string }> = {
+  disabled: { label: "Guardado en este dispositivo", dotClass: "bg-parchment/30" },
+  syncing: { label: "Sincronizando con la nube…", dotClass: "bg-gold animate-pulse" },
+  synced: { label: "Sincronizado con la nube", dotClass: "bg-success" },
+  offline: { label: "Sin conexión — guardado localmente", dotClass: "bg-parchment/30" },
+};
 
 function leaderNameOf(t: Tournament): string | null {
   const standings = calculateStandings(t);
@@ -35,6 +43,7 @@ const SECTIONS: {
 
 export function TournamentDashboard({
   tournaments,
+  syncStatus,
   onOpenTournament,
   onCreateTournament,
   onDeleteTournament,
@@ -68,6 +77,10 @@ export function TournamentDashboard({
         <p className="m-0 font-body text-base text-parchment/60">
           Hosted by Fernando Tuquina
         </p>
+        <div className="mt-3 flex items-center justify-center gap-2 font-sans text-[11px] text-parchment/35">
+          <span className={`inline-block h-1.5 w-1.5 rounded-full ${SYNC_STATUS_INFO[syncStatus].dotClass}`} />
+          {SYNC_STATUS_INFO[syncStatus].label}
+        </div>
       </header>
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 pb-15">

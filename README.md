@@ -36,6 +36,13 @@ npm run lint       # run oxlint
 npm run preview     # preview the production build locally
 ```
 
+### Cloud sync (optional)
+
+Tournaments are always saved to the browser's `localStorage` first, so the app works fully
+offline. If you also want them backed up/synced through Supabase, copy `app/.env.example` to
+`app/.env` and fill in your Supabase project's URL and anon key (Project Settings > API). Without
+those set, the app simply stays in local-only mode — nothing else changes.
+
 ## Features
 
 - Create and manage multiple draft tournaments.

@@ -8,6 +8,7 @@ import { Notification } from "./components/shared/Notification";
 function App() {
   const {
     tournaments,
+    syncStatus,
     createTournament,
     deleteTournament,
     addOrUpdatePlayer,
@@ -33,6 +34,7 @@ function App() {
       {!currentTournament && (
         <TournamentDashboard
           tournaments={tournaments}
+          syncStatus={syncStatus}
           onOpenTournament={setCurrentTournamentId}
           onCreateTournament={createTournament}
           onDeleteTournament={(id) => {
