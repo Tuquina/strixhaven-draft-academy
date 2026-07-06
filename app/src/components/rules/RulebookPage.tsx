@@ -34,15 +34,15 @@ export function RulebookPage({ onBack }: RulebookPageProps) {
           </h2>
         </div>
 
-        <div className="overflow-hidden rounded-xl border border-gold/15 bg-black/25 backdrop-blur-sm">
+        {/* Desktop: embedded PDF, scrolls fine with a mouse/trackpad. */}
+        <div className="hidden overflow-hidden rounded-xl border border-gold/15 bg-black/25 backdrop-blur-sm sm:block">
           <iframe
             src={RULEBOOK_PDF_URL}
             title="Magic: The Gathering — Guía de Inicio Rápido"
-            className="h-[65vh] w-full sm:h-[75vh]"
+            className="h-[75vh] w-full"
           />
         </div>
-
-        <p className="mt-4 text-center font-sans text-xs text-parchment/35">
+        <p className="mt-4 hidden text-center font-sans text-xs text-parchment/35 sm:block">
           ¿No se ve bien el manual acá arriba?{" "}
           <a
             href={RULEBOOK_PDF_URL}
@@ -54,6 +54,22 @@ export function RulebookPage({ onBack }: RulebookPageProps) {
           </a>
           .
         </p>
+
+        {/* Mobile: iOS/Android don't support touch-scrolling a PDF embedded in an iframe,
+            so open it as a normal page instead — the phone's native PDF viewer handles
+            pinch-zoom and scroll properly there. */}
+        <a
+          href={RULEBOOK_PDF_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="flex flex-col items-center gap-3 rounded-xl border border-gold/25 bg-gold/10 p-8 text-center no-underline backdrop-blur-sm transition-colors hover:bg-gold/16 sm:hidden"
+        >
+          <span className="text-5xl">📖</span>
+          <span className="font-heading text-base font-bold text-gold">Abrir la guía completa</span>
+          <span className="font-body text-sm text-parchment/60">
+            En el celular se lee mejor a pantalla completa, con zoom y scroll nativos.
+          </span>
+        </a>
 
         <p className="mt-6 text-center font-sans text-xs text-parchment/25">{FAN_CONTENT_NOTICE}</p>
       </main>
