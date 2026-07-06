@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Tournament } from "../../types";
 import { calculateStandings, formatStandingsClipboardText } from "../../lib/standings";
-import { generateTournamentRecapImage, shareOrDownloadImage } from "../../lib/tournamentImage";
+import { downloadImageBlob, generateTournamentRecapImage, shareOrDownloadImage } from "../../lib/tournamentImage";
 import { Button } from "../shared/Button";
 
 const RANK_BORDER = ["#C89B3C", "#C0C0C0", "#CD7F32"];
@@ -15,7 +15,7 @@ interface StandingsTableProps {
 export function StandingsTable({ tournament, hasResults, notify }: StandingsTableProps) {
   const standings = calculateStandings(tournament);
   const leader = standings.length > 0 && standings[0].pts > 0 ? standings[0] : null;
-  const [generatingImage, setGeneratingImage] = useState(false);
+  const [generatingImage, setGeneratingImage] = useState<"share" | "download" | null>(null);
 
   const copyStandings = async () => {
     const text = formatStandingsClipboardText(tournament.name, standings);
@@ -23,17 +23,31 @@ export function StandingsTable({ tournament, hasResults, notify }: StandingsTabl
     notify("Tabla copiada al portapapeles");
   };
 
+  const recapFilename = () => `${tournament.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-recap.png`;
+
   const shareImage = async () => {
-    setGeneratingImage(true);
+    setGeneratingImage("share");
     try {
       const blob = await generateTournamentRecapImage(tournament);
-      const filename = `${tournament.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-recap.png`;
-      const result = await shareOrDownloadImage(blob, filename, tournament.name);
+      const result = await shareOrDownloadImage(blob, recapFilename(), tournament.name);
       notify(result === "shared" ? "Imagen compartida" : "Imagen descargada — ¡listo para compartir!");
     } catch {
       notify("No se pudo generar la imagen");
     } finally {
-      setGeneratingImage(false);
+      setGeneratingImage(null);
+    }
+  };
+
+  const downloadImage = async () => {
+    setGeneratingImage("download");
+    try {
+      const blob = await generateTournamentRecapImage(tournament);
+      downloadImageBlob(blob, recapFilename());
+      notify("Imagen descargada");
+    } catch {
+      notify("No se pudo generar la imagen");
+    } finally {
+      setGeneratingImage(null);
     }
   };
 
@@ -111,9 +125,17 @@ export function StandingsTable({ tournament, hasResults, notify }: StandingsTabl
           variant="secondary"
           className="px-3.5 py-2.5 text-xs"
           onClick={shareImage}
-          disabled={generatingImage}
+          disabled={generatingImage !== null}
         >
-          {generatingImage ? "Generando imagen…" : "🖼️ Compartir imagen"}
+          {generatingImage === "share" ? "Generando imagen…" : "🖼️ Compartir imagen"}
+        </Button>
+        <Button
+          variant="secondary"
+          className="px-3.5 py-2.5 text-xs"
+          onClick={downloadImage}
+          disabled={generatingImage !== null}
+        >
+          {generatingImage === "download" ? "Generando imagen…" : "⬇️ Descargar imagen"}
         </Button>
       </div>
     </div>

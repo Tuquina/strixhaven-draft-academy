@@ -183,6 +183,7 @@ export async function generateTournamentRecapImage(tournament: Tournament): Prom
 
   if (hasResults) {
     rounds.forEach((round) => {
+      ctx.textAlign = "left";
       ctx.fillStyle = COLOR.gold;
       ctx.font = "bold 14px 'Cinzel', serif";
       ctx.fillText(`Ronda ${round.number}`, MARGIN_X, y + 14);
