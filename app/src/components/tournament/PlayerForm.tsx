@@ -34,7 +34,7 @@ export function PlayerForm({
         placeholder="Nombre del jugador"
         value={name}
         onChange={(e) => onNameChange(e.target.value)}
-        className="w-full rounded-lg border border-white/10 bg-black/30 px-3.5 py-2.5 font-body text-[15px] text-parchment"
+        className="w-full rounded-lg border border-white/10 bg-black/30 px-3.5 py-2.5 font-body text-base text-parchment"
       />
       <ColorSelector selected={colors} onToggle={onToggleColor} />
       {colors.length > 0 && <ColorCombinationBadge comboName={comboName} />}
@@ -42,7 +42,7 @@ export function PlayerForm({
         placeholder="Notas del mazo (opcional)"
         value={notes}
         onChange={(e) => onNotesChange(e.target.value)}
-        className="w-full rounded-lg border border-white/6 bg-black/20 px-3.5 py-2 font-body text-sm text-parchment"
+        className="w-full rounded-lg border border-white/6 bg-black/20 px-3.5 py-2 font-body text-base text-parchment sm:text-sm"
       />
       <div className="flex gap-2">
         <Button

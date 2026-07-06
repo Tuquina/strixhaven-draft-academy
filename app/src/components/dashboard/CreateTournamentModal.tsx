@@ -44,7 +44,7 @@ export function CreateTournamentModal({
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border border-white/10 bg-black/30 px-3.5 py-2.5 font-body text-[15px] text-parchment"
+            className="w-full rounded-lg border border-white/10 bg-black/30 px-3.5 py-2.5 font-body text-base text-parchment"
           />
         </div>
         <div>
@@ -54,7 +54,7 @@ export function CreateTournamentModal({
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-lg border border-white/6 bg-black/20 px-3.5 py-2.5 font-body text-sm text-parchment"
+            className="w-full rounded-lg border border-white/6 bg-black/20 px-3.5 py-2.5 font-body text-base text-parchment sm:text-sm"
           />
         </div>
         <div>

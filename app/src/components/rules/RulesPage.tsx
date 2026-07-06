@@ -44,11 +44,11 @@ const SECTIONS: { title: string; body: string }[] = [
 export function RulesPage({ onBack }: RulesPageProps) {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-[100] border-b border-gold/10 bg-background-panel/70 px-6 py-4 backdrop-blur-md">
+      <header className="sticky top-0 z-[100] border-b border-gold/10 bg-background-panel/70 px-4 py-3 backdrop-blur-md sm:px-6 sm:py-4">
         <div className="mx-auto flex max-w-[900px] items-center gap-3.5">
           <button
             onClick={onBack}
-            className="cursor-pointer rounded-md border border-gold/20 bg-transparent px-3 py-2 font-sans text-[13px] font-semibold whitespace-nowrap text-gold hover:bg-gold/10"
+            className="cursor-pointer rounded-md border border-gold/20 bg-transparent px-3 py-2.5 font-sans text-[13px] font-semibold whitespace-nowrap text-gold hover:bg-gold/10"
           >
             ← Volver
           </button>
@@ -58,9 +58,9 @@ export function RulesPage({ onBack }: RulesPageProps) {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[900px] flex-1 px-6 py-12">
+      <main className="mx-auto w-full max-w-[900px] flex-1 px-4 py-10 sm:px-6 sm:py-12">
         <div className="mb-10 text-center">
-          <div className="mb-3 font-sans text-xs tracking-[6px] text-gold/60 uppercase">
+          <div className="mb-3 font-sans text-[10px] tracking-[3px] text-gold/60 uppercase sm:text-xs sm:tracking-[6px]">
             ✦ Cómo se juega ✦
           </div>
           <h2 className={`${GRADIENT_TEXT_HERO} m-0 font-heading-decorative text-[clamp(28px,5vw,40px)] font-black animate-[heroTitleGlow_4s_ease-in-out_infinite]`}>
@@ -72,7 +72,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
           {SECTIONS.map((section) => (
             <section
               key={section.title}
-              className="rounded-xl border border-gold/12 bg-arcane-violet/8 p-6 backdrop-blur-sm"
+              className="rounded-xl border border-gold/12 bg-arcane-violet/8 p-4 backdrop-blur-sm sm:p-6"
             >
               <h3 className={`${GRADIENT_TEXT_GOLD} m-0 mb-2 font-heading-decorative text-lg font-bold`}>
                 {section.title}
@@ -88,9 +88,9 @@ export function RulesPage({ onBack }: RulesPageProps) {
           href={OFFICIAL_RULES_URL}
           target="_blank"
           rel="noreferrer"
-          className="mt-8 flex items-center justify-between gap-3 rounded-xl border border-gold/25 bg-gold/10 p-5 no-underline backdrop-blur-sm transition-colors hover:bg-gold/16"
+          className="mt-8 flex items-center justify-between gap-3 rounded-xl border border-gold/25 bg-gold/10 p-4 no-underline backdrop-blur-sm transition-colors hover:bg-gold/16 sm:p-5"
         >
-          <div>
+          <div className="min-w-0">
             <div className="font-sans text-[11px] font-bold tracking-[2px] text-gold uppercase">
               Reglas oficiales
             </div>

@@ -75,27 +75,29 @@ export function TournamentDashboard({
     <div className="flex min-h-screen flex-col">
       <button
         onClick={onShowRules}
-        className="fixed top-5 left-5 z-40 cursor-pointer rounded-md border border-[#f0e6d0]/12 bg-[#f0e6d0]/8 px-5 py-3 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0]/60 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f0e6d0]/30 hover:bg-[#f0e6d0]/12 hover:text-[#f0e6d0]"
+        className="fixed top-3 left-3 z-40 cursor-pointer rounded-md border border-[#f0e6d0]/12 bg-[#f0e6d0]/8 px-3 py-2 font-heading text-xs font-semibold tracking-wide text-[#f0e6d0]/60 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f0e6d0]/30 hover:bg-[#f0e6d0]/12 hover:text-[#f0e6d0] sm:top-5 sm:left-5 sm:px-5 sm:py-3 sm:text-[13px]"
       >
-        📋 Reglas del Draft
+        <span className="sm:hidden">📋</span>
+        <span className="hidden sm:inline">📋 Reglas del Draft</span>
       </button>
 
       <button
         onClick={onShowRulebook}
-        className="fixed top-5 right-5 z-40 cursor-pointer rounded-md border border-[#f0e6d0]/12 bg-[#f0e6d0]/8 px-5 py-3 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0]/60 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f0e6d0]/30 hover:bg-[#f0e6d0]/12 hover:text-[#f0e6d0]"
+        className="fixed top-3 right-3 z-40 cursor-pointer rounded-md border border-[#f0e6d0]/12 bg-[#f0e6d0]/8 px-3 py-2 font-heading text-xs font-semibold tracking-wide text-[#f0e6d0]/60 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f0e6d0]/30 hover:bg-[#f0e6d0]/12 hover:text-[#f0e6d0] sm:top-5 sm:right-5 sm:px-5 sm:py-3 sm:text-[13px]"
       >
-        📘 Manual de Magic
+        <span className="sm:hidden">📘</span>
+        <span className="hidden sm:inline">📘 Manual de Magic</span>
       </button>
 
-      <header className="relative px-5 pt-15 pb-10 text-center">
-        <div className="mb-4 font-sans text-[13px] font-semibold tracking-[4px] text-gold uppercase [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">
+      <header className="relative px-4 pt-16 pb-8 text-center sm:px-5 sm:pt-15 sm:pb-10">
+        <div className="mb-4 font-sans text-[11px] font-semibold tracking-[2px] text-gold uppercase [text-shadow:0_1px_8px_rgba(0,0,0,0.8)] sm:text-[13px] sm:tracking-[4px]">
           ✦ Organizador Casual de Torneos Draft ✦
         </div>
-        <h1 className={`${GRADIENT_TEXT_HERO} m-0 font-heading-decorative text-[clamp(32px,6vw,56px)] leading-[1.15] font-black tracking-wide animate-[heroTitleGlow_4s_ease-in-out_infinite]`}>
+        <h1 className={`${GRADIENT_TEXT_HERO} m-0 font-heading-decorative text-[clamp(28px,7vw,56px)] leading-[1.15] font-black tracking-wide animate-[heroTitleGlow_4s_ease-in-out_infinite]`}>
           Strixhaven Draft Academy
         </h1>
         <div className="mx-auto my-5 h-0.5 w-15 bg-gradient-to-r from-transparent via-[#5cb338] to-transparent" />
-        <p className="m-0 font-garamond text-xl font-semibold text-parchment/85 [text-shadow:0_1px_6px_rgba(0,0,0,0.7)]">
+        <p className="m-0 font-garamond text-lg font-semibold text-parchment/85 [text-shadow:0_1px_6px_rgba(0,0,0,0.7)] sm:text-xl">
           Hosted by Fernando Tuquina
         </p>
         <div className="mt-2 flex items-center justify-center gap-2">
@@ -106,23 +108,23 @@ export function TournamentDashboard({
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-6 pb-15">
-        <div className="mb-8 flex flex-wrap justify-center gap-4">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-15 sm:px-6">
+        <div className="mb-8 flex flex-wrap justify-center gap-2 sm:gap-4">
           <button
             onClick={() => setShowCreateModal(true)}
-            className="cursor-pointer rounded-md border-2 border-gold/60 bg-[linear-gradient(135deg,#d4af37,#b8960c)] px-8 py-3.5 font-heading text-sm font-bold tracking-[1.5px] text-[#1a1535] uppercase shadow-[0_4px_20px_rgba(212,175,55,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_30px_rgba(212,175,55,0.45)]"
+            className="cursor-pointer rounded-md border-2 border-gold/60 bg-[linear-gradient(135deg,#d4af37,#b8960c)] px-5 py-3 font-heading text-sm font-bold tracking-[1.5px] text-[#1a1535] uppercase shadow-[0_4px_20px_rgba(212,175,55,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_30px_rgba(212,175,55,0.45)] sm:px-8 sm:py-3.5"
           >
             ✦ Crear Nuevo Torneo
           </button>
           <button
             onClick={handleImportClick}
-            className="cursor-pointer rounded-md border border-gold/25 bg-[#f0e6d0]/8 px-7 py-3.5 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/50 hover:bg-[#f0e6d0]/15"
+            className="cursor-pointer rounded-md border border-gold/25 bg-[#f0e6d0]/8 px-4 py-3 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/50 hover:bg-[#f0e6d0]/15 sm:px-7 sm:py-3.5"
           >
             Importar JSON
           </button>
           <button
             onClick={() => setShowTimerModal(true)}
-            className="cursor-pointer rounded-md border border-gold/25 bg-[#f0e6d0]/8 px-7 py-3.5 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/50 hover:bg-[#f0e6d0]/15"
+            className="cursor-pointer rounded-md border border-gold/25 bg-[#f0e6d0]/8 px-4 py-3 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/50 hover:bg-[#f0e6d0]/15 sm:px-7 sm:py-3.5"
           >
             ⏱ Temporizador
           </button>
@@ -146,7 +148,7 @@ export function TournamentDashboard({
                 <span className={`inline-block h-2 w-2 rounded-full ${section.dotClass}`} />
                 {section.title}
               </h2>
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
                 {list.map((t) => (
                   <TournamentCard
                     key={t.id}

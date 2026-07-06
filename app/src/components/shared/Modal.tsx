@@ -9,13 +9,13 @@ interface ModalProps {
 export function Modal({ onClose, maxWidth = "460px", children }: ModalProps) {
   return (
     <div
-      className="animate-fade-in fixed inset-0 z-[1000] flex items-center justify-center bg-black/70 p-5"
+      className="animate-fade-in fixed inset-0 z-[1000] flex items-center justify-center bg-black/70 p-3 sm:p-5"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <div
-        className="w-full rounded-2xl border border-gold/20 bg-background-panel p-7 shadow-[0_8px_40px_rgba(0,0,0,0.5)]"
+        className="max-h-[92vh] w-full overflow-y-auto rounded-2xl border border-gold/20 bg-background-panel p-4 shadow-[0_8px_40px_rgba(0,0,0,0.5)] sm:p-7"
         style={{ maxWidth }}
       >
         {children}

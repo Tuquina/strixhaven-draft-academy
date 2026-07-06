@@ -242,7 +242,7 @@ export function MatchTimerPanel({
           )}
 
           {hasPlayers && (
-            <div className="grid w-full grid-cols-2 gap-3">
+            <div className="grid w-full grid-cols-2 gap-2 sm:gap-3">
               {(["A", "B"] as const).map((p) => {
                 const seconds = p === "A" ? playerASeconds : playerBSeconds;
                 const name = p === "A" ? playerAName : playerBName;
@@ -253,7 +253,7 @@ export function MatchTimerPanel({
                     type="button"
                     onClick={() => switchTo(p)}
                     disabled={matchDone}
-                    className={`flex cursor-pointer flex-col items-center gap-2 rounded-xl border p-4 transition-all disabled:cursor-not-allowed ${
+                    className={`flex min-w-0 cursor-pointer flex-col items-center gap-2 rounded-xl border p-2 transition-all disabled:cursor-not-allowed sm:p-4 ${
                       isActive
                         ? "border-gold/50 bg-gold/10 shadow-[0_0_20px_rgba(200,155,60,0.25)]"
                         : "border-white/10 bg-white/2 opacity-55 hover:opacity-80"

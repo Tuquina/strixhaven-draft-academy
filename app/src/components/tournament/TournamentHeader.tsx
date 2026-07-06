@@ -21,12 +21,12 @@ export function TournamentHeader({
   onOpenTimer,
 }: TournamentHeaderProps) {
   return (
-    <header className="sticky top-0 z-[100] border-b border-gold/10 bg-background-panel/70 px-6 py-4 backdrop-blur-md">
+    <header className="sticky top-0 z-[100] border-b border-gold/10 bg-background-panel/70 px-4 py-3 backdrop-blur-md sm:px-6 sm:py-4">
       <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3">
-        <div className="flex min-w-0 flex-1 items-center gap-3.5">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3.5">
           <button
             onClick={onBack}
-            className="cursor-pointer rounded-md border border-gold/20 bg-transparent px-3 py-2 font-sans text-[13px] font-semibold whitespace-nowrap text-gold hover:bg-gold/10"
+            className="cursor-pointer rounded-md border border-gold/20 bg-transparent px-3 py-2.5 font-sans text-[13px] font-semibold whitespace-nowrap text-gold hover:bg-gold/10"
           >
             ← Volver
           </button>
@@ -39,7 +39,7 @@ export function TournamentHeader({
                 {STATUS_LABELS[tournament.status]}
               </span>
               <span>{tournament.players.length} jugadores</span>
-              <span className="text-parchment/30">Hosted by Fernando Tuquina</span>
+              <span className="hidden text-parchment/30 sm:inline">Hosted by Fernando Tuquina</span>
             </div>
           </div>
         </div>

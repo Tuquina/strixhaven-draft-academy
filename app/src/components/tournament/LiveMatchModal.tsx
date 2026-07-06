@@ -241,7 +241,7 @@ export function LiveMatchModal({
             </div>
 
             {showTimer && (
-              <div className="mt-5 rounded-xl border border-gold/15 bg-black/20 p-4">
+              <div className="mt-5 rounded-xl border border-gold/15 bg-black/20 p-2 sm:p-4">
                 <MatchTimerPanel playerAName={playerAName} playerBName={playerBName} />
               </div>
             )}

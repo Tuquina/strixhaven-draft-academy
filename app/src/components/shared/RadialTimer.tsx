@@ -18,7 +18,7 @@ export function RadialTimer({ size, progress, secondsRemaining, label, danger }:
   const handLength = radius * 0.75;
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+    <svg viewBox={`0 0 ${size} ${size}`} style={{ width: "100%", height: "auto", maxWidth: size }}>
       <circle cx={center} cy={center} r={radius} fill="rgba(0,0,0,0.15)" stroke="rgba(255,255,255,0.08)" strokeWidth={strokeWidth} />
       {Array.from({ length: 12 }).map((_, i) => {
         const angle = (i / 12) * 2 * Math.PI;

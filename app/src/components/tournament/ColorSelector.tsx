@@ -17,7 +17,7 @@ export function ColorSelector({ selected, onToggle }: ColorSelectorProps) {
             key={c}
             type="button"
             onClick={() => onToggle(c)}
-            className="flex cursor-pointer items-center gap-1.5 rounded-full border-2 px-3 py-1.5 font-sans text-xs font-semibold transition-opacity hover:opacity-85"
+            className="flex cursor-pointer items-center gap-1.5 rounded-full border-2 px-3 py-2 font-sans text-xs font-semibold transition-opacity hover:opacity-85 sm:py-1.5"
             style={
               isSelected
                 ? {

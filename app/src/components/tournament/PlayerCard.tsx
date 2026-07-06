@@ -37,13 +37,13 @@ export function PlayerCard({ player, comboName, canEdit, onEdit, onRemove }: Pla
           <div className="flex shrink-0 gap-1">
             <button
               onClick={onEdit}
-              className="cursor-pointer rounded border border-gold/20 bg-transparent px-2.5 py-1 font-sans text-[11px] font-semibold text-gold hover:bg-gold/8"
+              className="cursor-pointer rounded border border-gold/20 bg-transparent px-2.5 py-2 font-sans text-[11px] font-semibold text-gold hover:bg-gold/8 sm:py-1"
             >
               Editar
             </button>
             <button
               onClick={onRemove}
-              className="cursor-pointer rounded border border-danger/20 bg-transparent px-2.5 py-1 font-sans text-[11px] font-semibold text-danger hover:bg-danger/8"
+              className="cursor-pointer rounded border border-danger/20 bg-transparent px-2.5 py-2 font-sans text-[11px] font-semibold text-danger hover:bg-danger/8 sm:py-1"
             >
               Eliminar
             </button>
