@@ -1,4 +1,5 @@
 import { supabase } from "./supabaseClient";
+import { normalizeTournament } from "./storage";
 import type { Tournament } from "../types";
 
 const TABLE = "tournaments";
@@ -11,7 +12,7 @@ export async function fetchCloudTournaments(): Promise<Tournament[] | null> {
   if (!supabase) return null;
   const { data, error } = await supabase.from(TABLE).select("data");
   if (error) return null;
-  return data.map((row) => row.data as Tournament);
+  return data.map((row) => normalizeTournament(row.data as Tournament));
 }
 
 export async function pushTournament(tournament: Tournament): Promise<boolean> {

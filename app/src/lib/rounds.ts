@@ -1,5 +1,5 @@
-import { formatResultText } from "./format";
-import type { Match, Tournament } from "../types";
+import { formatResultText, formatPodResultText } from "./format";
+import type { Match, Pod, Tournament } from "../types";
 
 export interface MatchDisplay {
   id: string;
@@ -48,6 +48,48 @@ export function describeRounds(tournament: Tournament): RoundDisplay[] {
         isPending: m.status === "pending",
         resultText,
         match: m,
+      };
+    }),
+  }));
+}
+
+export interface PodDisplay {
+  id: string;
+  playerIds: string[];
+  playerNames: string[];
+  isCompleted: boolean;
+  isPending: boolean;
+  resultText: string;
+  pod: Pod;
+}
+
+export interface PodRoundDisplay {
+  id: string;
+  number: number;
+  pods: PodDisplay[];
+}
+
+export function describePods(tournament: Tournament): PodRoundDisplay[] {
+  const nameOf = (id: string) => tournament.players.find((p) => p.id === id)?.name || "";
+
+  return tournament.rounds.map((round) => ({
+    id: round.id,
+    number: round.roundNumber,
+    pods: (round.pods ?? []).map((pod) => {
+      const isCompleted = pod.status === "completed";
+      let resultText = "Pendiente";
+      if (isCompleted && pod.result) {
+        const winnerName = pod.result.isDraw || !pod.result.winnerPlayerId ? null : nameOf(pod.result.winnerPlayerId);
+        resultText = formatPodResultText(pod.result.isDraw, winnerName);
+      }
+      return {
+        id: pod.id,
+        playerIds: pod.playerIds,
+        playerNames: pod.playerIds.map(nameOf),
+        isCompleted,
+        isPending: pod.status === "pending",
+        resultText,
+        pod,
       };
     }),
   }));

@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { genId } from "../lib/id";
 import { getColorCombo } from "../lib/colors";
-import { generateRoundRobin } from "../lib/schedule";
-import { loadTournaments, saveTournaments } from "../lib/storage";
+import { generatePods, generateRoundRobin } from "../lib/schedule";
+import { loadTournaments, normalizeTournament, saveTournaments } from "../lib/storage";
+import { DEFAULT_COMMANDER_ROUNDS, DEFAULT_POD_SIZE, isMultiplayerFormat, MIN_POD_SIZE } from "../lib/gameFormats";
 import {
   deleteCloudTournament,
   fetchCloudTournaments,
@@ -11,9 +12,11 @@ import {
   pushTournament,
 } from "../lib/cloudSync";
 import type {
+  GameFormat,
   ManaColor,
   MatchFormat,
   MatchResult,
+  PodResult,
   Tournament,
 } from "../types";
 
@@ -23,6 +26,7 @@ export interface CreateTournamentInput {
   name: string;
   description: string;
   format: MatchFormat;
+  gameFormat: GameFormat;
   allowDraws: boolean;
 }
 
@@ -100,6 +104,7 @@ export function useTournaments() {
       host: "Fernando Tuquina",
       status: "drafting",
       format: input.format,
+      gameFormat: input.gameFormat,
       allowDraws: input.allowDraws,
       players: [],
       rounds: [],
@@ -119,8 +124,8 @@ export function useTournaments() {
     (tournamentId: string, form: PlayerFormInput) => {
       const name = form.name.trim();
       if (!name) return;
-      const combo = getColorCombo(form.colors);
       updateTournament(tournamentId, (t) => {
+        const combo = getColorCombo(form.colors, t.gameFormat === "draft");
         if (form.editingId) {
           return {
             ...t,
@@ -171,8 +176,16 @@ export function useTournaments() {
   );
 
   const generateSchedule = useCallback(
-    (tournamentId: string) => {
+    (tournamentId: string, roundsCount?: number) => {
       updateTournament(tournamentId, (t) => {
+        if (isMultiplayerFormat(t.gameFormat)) {
+          if (t.players.length < MIN_POD_SIZE) return t;
+          return {
+            ...t,
+            rounds: generatePods(t.players, roundsCount ?? DEFAULT_COMMANDER_ROUNDS, DEFAULT_POD_SIZE),
+            status: "active",
+          };
+        }
         if (t.players.length < 2) return t;
         return {
           ...t,
@@ -192,6 +205,21 @@ export function useTournaments() {
           ...round,
           matches: round.matches.map((m) =>
             m.id === matchId ? { ...m, status: "completed", result } : m
+          ),
+        })),
+      }));
+    },
+    [updateTournament]
+  );
+
+  const savePodResult = useCallback(
+    (tournamentId: string, podId: string, result: PodResult) => {
+      updateTournament(tournamentId, (t) => ({
+        ...t,
+        rounds: t.rounds.map((round) => ({
+          ...round,
+          pods: (round.pods ?? []).map((pod) =>
+            pod.id === podId ? { ...pod, status: "completed" as const, result } : pod
           ),
         })),
       }));
@@ -240,7 +268,7 @@ export function useTournaments() {
         try {
           const raw = JSON.parse(String(e.target?.result));
           if (!raw.name || !raw.players) throw new Error("invalid");
-          const tournament: Tournament = { ...raw, id: genId() };
+          const tournament: Tournament = normalizeTournament({ ...raw, id: genId() });
           setTournaments((all) => [...all, tournament]);
           resolve(true);
         } catch {
@@ -262,6 +290,7 @@ export function useTournaments() {
     removePlayer,
     generateSchedule,
     saveResult,
+    savePodResult,
     finalizeTournament,
     reopenTournament,
     exportTournament,

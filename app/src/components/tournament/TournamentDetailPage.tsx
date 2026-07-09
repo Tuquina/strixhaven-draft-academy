@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Tournament, MatchResult } from "../../types";
+import type { Tournament, MatchResult, PodResult } from "../../types";
 import type { PlayerFormInput } from "../../hooks/useTournaments";
 import { calculateStandings } from "../../lib/standings";
 import { FAN_CONTENT_NOTICE } from "../../lib/legal";
@@ -10,6 +10,7 @@ import { PlayerRoster } from "./PlayerRoster";
 import { RoundRobinSchedule } from "./RoundRobinSchedule";
 import { StandingsTable } from "./StandingsTable";
 import { ResultModal } from "./ResultModal";
+import { PodResultModal } from "./PodResultModal";
 import { FinalizeTournamentModal } from "./FinalizeTournamentModal";
 import { Confetti } from "../shared/Confetti";
 import { MatchTimerModal } from "../shared/MatchTimerModal";
@@ -21,8 +22,9 @@ interface TournamentDetailPageProps {
   onBack: () => void;
   onAddOrUpdatePlayer: (form: PlayerFormInput) => void;
   onRemovePlayer: (playerId: string) => void;
-  onGenerateSchedule: () => void;
+  onGenerateSchedule: (roundsCount?: number) => void;
   onSaveResult: (matchId: string, result: MatchResult) => void;
+  onSavePodResult: (podId: string, result: PodResult) => void;
   onFinalize: () => void;
   onReopen: () => void;
   onExport: () => void;
@@ -42,6 +44,7 @@ export function TournamentDetailPage({
   onRemovePlayer,
   onGenerateSchedule,
   onSaveResult,
+  onSavePodResult,
   onFinalize,
   onReopen,
   onExport,
@@ -51,11 +54,12 @@ export function TournamentDetailPage({
   const [mobileTab, setMobileTab] = useState<MobileTab>("players");
   const [showFinalizeModal, setShowFinalizeModal] = useState(false);
   const [resultModalMatchId, setResultModalMatchId] = useState<string | null>(null);
+  const [resultModalPodId, setResultModalPodId] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showTimerModal, setShowTimerModal] = useState(false);
 
-  const hasResults = tournament.rounds.some((r) =>
-    r.matches.some((m) => m.status === "completed")
+  const hasResults = tournament.rounds.some(
+    (r) => r.matches.some((m) => m.status === "completed") || (r.pods ?? []).some((p) => p.status === "completed")
   );
   const standings = calculateStandings(tournament);
   const podium =
@@ -70,6 +74,13 @@ export function TournamentDetailPage({
   const playerB = activeMatch?.playerBId
     ? tournament.players.find((p) => p.id === activeMatch.playerBId)
     : null;
+
+  const activePod = resultModalPodId
+    ? tournament.rounds.flatMap((r) => r.pods ?? []).find((p) => p.id === resultModalPodId) ?? null
+    : null;
+  const activePodPlayerNames = activePod?.playerIds.map(
+    (id) => tournament.players.find((p) => p.id === id)?.name || ""
+  );
 
   const handleFinalize = () => {
     onFinalize();
@@ -130,8 +141,8 @@ export function TournamentDetailPage({
             tournament={tournament}
             onAddOrUpdatePlayer={onAddOrUpdatePlayer}
             onRemovePlayer={onRemovePlayer}
-            onGenerateSchedule={() => {
-              onGenerateSchedule();
+            onGenerateSchedule={(roundsCount) => {
+              onGenerateSchedule(roundsCount);
               setMobileTab("rounds");
               notify("Fixture generado — ¡a jugar!");
             }}
@@ -152,6 +163,7 @@ export function TournamentDetailPage({
               onSaveResult(matchId, result);
               notify("Resultado guardado");
             }}
+            onOpenPodResult={(podId) => setResultModalPodId(podId)}
           />
         )}
 
@@ -179,6 +191,21 @@ export function TournamentDetailPage({
           onSave={(result) => {
             onSaveResult(activeMatch.id, result);
             setResultModalMatchId(null);
+            notify("Resultado guardado");
+          }}
+        />
+      )}
+
+      {activePod && activePodPlayerNames && (
+        <PodResultModal
+          playerIds={activePod.playerIds}
+          playerNames={activePodPlayerNames}
+          allowDraws={tournament.allowDraws}
+          initialResult={activePod.result}
+          onClose={() => setResultModalPodId(null)}
+          onSave={(result) => {
+            onSavePodResult(activePod.id, result);
+            setResultModalPodId(null);
             notify("Resultado guardado");
           }}
         />

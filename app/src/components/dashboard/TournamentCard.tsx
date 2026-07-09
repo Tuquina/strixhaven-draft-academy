@@ -2,6 +2,7 @@ import type { Tournament } from "../../types";
 import { StatusBadge } from "../shared/StatusBadge";
 import { Button } from "../shared/Button";
 import { GRADIENT_TEXT_GOLD } from "../../lib/designSystem";
+import { GAME_FORMAT_LABELS } from "../../lib/gameFormats";
 
 const BORDER_CLASSES: Record<Tournament["status"], string> = {
   active: "border-success/25",
@@ -39,7 +40,14 @@ export function TournamentCard({
         <h3 className={`${GRADIENT_TEXT_GOLD} m-0 line-clamp-2 min-w-0 font-heading-decorative text-xl font-bold leading-tight`}>
           {tournament.name}
         </h3>
-        <StatusBadge status={tournament.status} />
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          <StatusBadge status={tournament.status} />
+          {tournament.gameFormat !== "draft" && (
+            <span className="rounded px-2 py-1 font-sans text-[11px] font-bold tracking-wide text-parchment/50 uppercase">
+              {GAME_FORMAT_LABELS[tournament.gameFormat]}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="mb-2 flex flex-wrap gap-4 font-sans text-[13px] text-parchment/50">

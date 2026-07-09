@@ -31,6 +31,18 @@ read-only unless the user explicitly asks to update the design bundle itself.
   offline; Supabase (via `src/lib/supabaseClient.ts` and `src/lib/cloudSync.ts`) is an
   optional sync layer on top — see "Cloud sync (Supabase)" below.
 - Key domain types live in `src/types.ts` (`Tournament`, `Player`, `Round`, `Match`, ...).
+- `Tournament.gameFormat` (`src/lib/gameFormats.ts`) picks the tournament type: `"draft"` is the
+  app's original mode and the default (chosen via a collapsed "¿Buscás otro tipo de torneo?"
+  toggle in `CreateTournamentModal`); `standard`/`pioneer`/`brawl` are also 1v1 and reuse the exact
+  same `Match`/`Round`/`generateRoundRobin`/`calculateStandings` engine as draft, just with the
+  Strixhaven-college flavor (`getColorCombo`'s `includeCollege` param) turned off and a rules link
+  in `TournamentHeader`. `commander` is multiplayer and uses a parallel `Pod`/`Round.pods` engine
+  (`generatePods`, `calculateCommanderStandings`, `PodCard`/`PodResultModal`) instead — pods of
+  ~4 players are reshuffled at random each round (no repeat-pairing guarantee, by design for a
+  casual friend group), one winner per pod, 3/1/0 scoring. Tournaments saved before this feature
+  existed lack `gameFormat`; `lib/storage.ts`'s `normalizeTournament()` backfills it to `"draft"`
+  on every load path (localStorage, Supabase, JSON import) so the rest of the app can assume it's
+  always present.
 - Structure: `src/components/dashboard` (tournament list/creation), `src/components/tournament`
   (in-tournament views: roster, schedule, standings, results), `src/components/shared`
   (generic UI primitives).

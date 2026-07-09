@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Modal } from "../shared/Modal";
 import { Button } from "../shared/Button";
-import type { MatchFormat } from "../../types";
+import { GAME_FORMAT_LABELS } from "../../lib/gameFormats";
+import type { GameFormat, MatchFormat } from "../../types";
 import type { CreateTournamentInput } from "../../hooks/useTournaments";
 
 interface CreateTournamentModalProps {
@@ -11,6 +12,8 @@ interface CreateTournamentModalProps {
   onCreate: (input: CreateTournamentInput) => void;
   onClose: () => void;
 }
+
+const OTHER_FORMATS: GameFormat[] = ["standard", "pioneer", "brawl", "commander"];
 
 const formatButtonClass = (active: boolean) =>
   `cursor-pointer rounded-lg border-2 px-4 py-2.5 font-sans text-xs font-semibold ${
@@ -30,6 +33,8 @@ export function CreateTournamentModal({
   const [description, setDescription] = useState("");
   const [format, setFormat] = useState<MatchFormat>(defaultFormat);
   const [allowDraws, setAllowDraws] = useState(defaultAllowDraws);
+  const [gameFormat, setGameFormat] = useState<GameFormat>("draft");
+  const [showOtherFormats, setShowOtherFormats] = useState(false);
 
   return (
     <Modal onClose={onClose} maxWidth="460px">
@@ -57,19 +62,21 @@ export function CreateTournamentModal({
             className="w-full rounded-lg border border-white/6 bg-black/20 px-3.5 py-2.5 font-body text-base text-parchment sm:text-sm"
           />
         </div>
-        <div>
-          <label className="mb-2 block font-sans text-[11px] font-semibold tracking-wide text-parchment/40 uppercase">
-            Formato de partida
-          </label>
-          <div className="flex gap-2">
-            <button className={formatButtonClass(format === "bo3")} onClick={() => setFormat("bo3")}>
-              Mejor de 3
-            </button>
-            <button className={formatButtonClass(format === "bo1")} onClick={() => setFormat("bo1")}>
-              Partida única
-            </button>
+        {gameFormat !== "commander" && (
+          <div>
+            <label className="mb-2 block font-sans text-[11px] font-semibold tracking-wide text-parchment/40 uppercase">
+              Formato de partida
+            </label>
+            <div className="flex gap-2">
+              <button className={formatButtonClass(format === "bo3")} onClick={() => setFormat("bo3")}>
+                Mejor de 3
+              </button>
+              <button className={formatButtonClass(format === "bo1")} onClick={() => setFormat("bo1")}>
+                Partida única
+              </button>
+            </div>
           </div>
-        </div>
+        )}
         <div className="flex items-center justify-between">
           <label className="font-sans text-xs font-semibold text-parchment/40">
             Permitir empates
@@ -85,6 +92,33 @@ export function CreateTournamentModal({
             {allowDraws ? "Activado" : "Desactivado"}
           </button>
         </div>
+
+        <div className="border-t border-white/8 pt-3.5">
+          <button
+            type="button"
+            onClick={() => setShowOtherFormats((v) => !v)}
+            className="cursor-pointer border-none bg-transparent p-0 text-left font-sans text-xs font-semibold text-gold/70 underline decoration-dotted underline-offset-2 hover:text-gold"
+          >
+            {gameFormat === "draft"
+              ? "¿Buscás otro tipo de torneo?"
+              : `Tipo de torneo: ${GAME_FORMAT_LABELS[gameFormat]} — cambiar`}
+          </button>
+
+          {showOtherFormats && (
+            <div className="mt-2.5 flex flex-wrap gap-2">
+              {OTHER_FORMATS.map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setGameFormat((current) => (current === f ? "draft" : f))}
+                  className={formatButtonClass(gameFormat === f)}
+                >
+                  {GAME_FORMAT_LABELS[f]}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       <div className="mt-6 flex gap-2.5">
         <Button
@@ -92,7 +126,7 @@ export function CreateTournamentModal({
           fullWidth
           className="py-3.5 font-heading text-sm"
           disabled={!name.trim()}
-          onClick={() => onCreate({ name, description, format, allowDraws })}
+          onClick={() => onCreate({ name, description, format, gameFormat, allowDraws })}
         >
           Crear torneo
         </Button>

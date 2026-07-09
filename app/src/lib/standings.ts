@@ -1,5 +1,6 @@
 import { getColorCombo } from "./colors";
 import type { StrixhavenCollege } from "./colors";
+import { isMultiplayerFormat } from "./gameFormats";
 import type { ManaColor, Tournament } from "../types";
 
 export interface StandingRow {
@@ -20,10 +21,14 @@ export interface StandingRow {
 }
 
 export function calculateStandings(tournament: Tournament): StandingRow[] {
+  if (isMultiplayerFormat(tournament.gameFormat)) {
+    return calculateCommanderStandings(tournament);
+  }
+
   const table: Record<string, Omit<StandingRow, "position" | "diff">> = {};
 
   tournament.players.forEach((p) => {
-    const combo = getColorCombo(p.colors);
+    const combo = getColorCombo(p.colors, true);
     table[p.id] = {
       id: p.id,
       name: p.name,
@@ -107,6 +112,61 @@ export function calculateStandings(tournament: Tournament): StandingRow[] {
     position: i + 1,
     diff: row.jg - row.jp,
   }));
+}
+
+/**
+ * Commander standings: pj/pg/pe are pods played/won/drawn (no jg/jp/diff — a pod
+ * has no game score). Points follow the same 3/1/0 scale as 1v1 matches: pod
+ * winner gets 3, a group draw gives everyone in that pod 1, everyone else 0.
+ */
+function calculateCommanderStandings(tournament: Tournament): StandingRow[] {
+  const table: Record<string, Omit<StandingRow, "position" | "diff">> = {};
+
+  tournament.players.forEach((p) => {
+    const combo = getColorCombo(p.colors, false);
+    table[p.id] = {
+      id: p.id,
+      name: p.name,
+      colors: [...p.colors],
+      comboName: combo.name,
+      college: null,
+      pj: 0,
+      pg: 0,
+      pe: 0,
+      pp: 0,
+      jg: 0,
+      jp: 0,
+      pts: 0,
+    };
+  });
+
+  tournament.rounds.forEach((round) => {
+    (round.pods ?? []).forEach((pod) => {
+      if (pod.status !== "completed" || !pod.result) return;
+      pod.playerIds.forEach((playerId) => {
+        const row = table[playerId];
+        if (!row) return;
+        row.pj++;
+        if (pod.result!.isDraw) {
+          row.pe++;
+          row.pts += 1;
+        } else if (pod.result!.winnerPlayerId === playerId) {
+          row.pg++;
+          row.pts += 3;
+        } else {
+          row.pp++;
+        }
+      });
+    });
+  });
+
+  const rows = Object.values(table).sort((a, b) => {
+    if (b.pts !== a.pts) return b.pts - a.pts;
+    if (b.pg !== a.pg) return b.pg - a.pg;
+    return a.name.localeCompare(b.name);
+  });
+
+  return rows.map((row, i) => ({ ...row, position: i + 1, diff: 0 }));
 }
 
 export function formatStandingsClipboardText(

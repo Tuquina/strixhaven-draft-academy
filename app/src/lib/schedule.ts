@@ -1,5 +1,6 @@
 import { genId } from "./id";
-import type { Player, Round } from "../types";
+import { distributePodSizes, MIN_POD_SIZE } from "./gameFormats";
+import type { Player, Pod, Round } from "../types";
 
 const BYE = "BYE" as const;
 
@@ -48,4 +49,41 @@ export function generateRoundRobin(players: Player[]): Round[] {
   }
 
   return rounds;
+}
+
+function shuffled<T>(items: T[]): T[] {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+/**
+ * Commander has no clean round-robin — instead, each round shuffles the whole
+ * roster and splits it into balanced tables (see distributePodSizes), so players
+ * mix with different people round to round. One winner (or a group draw) per pod,
+ * no game score.
+ */
+export function generatePods(players: Player[], roundsCount: number, podSize?: number): Round[] {
+  if (players.length < MIN_POD_SIZE || roundsCount < 1) return [];
+
+  const podSizes = distributePodSizes(players.length, podSize);
+
+  return Array.from({ length: roundsCount }, (_, r) => {
+    const order = shuffled(players.map((p) => p.id));
+    const pods: Pod[] = [];
+    let cursor = 0;
+    for (const size of podSizes) {
+      pods.push({
+        id: genId(),
+        roundNumber: r + 1,
+        playerIds: order.slice(cursor, cursor + size),
+        status: "pending",
+      });
+      cursor += size;
+    }
+    return { id: genId(), roundNumber: r + 1, matches: [], pods };
+  });
 }

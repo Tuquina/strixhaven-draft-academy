@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Tournament } from "../../types";
 import { calculateStandings, formatStandingsClipboardText } from "../../lib/standings";
 import { downloadImageBlob, generateTournamentRecapImage, shareOrDownloadImage } from "../../lib/tournamentImage";
+import { isMultiplayerFormat } from "../../lib/gameFormats";
 import { Button } from "../shared/Button";
 import { PANEL } from "../../lib/designSystem";
 
@@ -60,6 +61,7 @@ export function StandingsTable({ tournament, hasResults, notify }: StandingsTabl
   };
 
   const canCopy = hasResults && standings.length > 0;
+  const isCommander = isMultiplayerFormat(tournament.gameFormat);
 
   return (
     <div className="flex flex-col gap-3.5">
@@ -91,13 +93,23 @@ export function StandingsTable({ tournament, hasResults, notify }: StandingsTabl
                   <tr className="border-b border-gold/20 bg-gold/12">
                     <th className="px-2 py-2.5 text-center text-[10px] font-bold tracking-wider text-gold uppercase">#</th>
                     <th className="px-2 py-2.5 text-left text-[10px] font-bold tracking-wider text-gold uppercase">Jugador</th>
-                    <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-parchment/50" title="Partidos jugados">PJ</th>
-                    <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-success/80" title="Partidos ganados">PG</th>
-                    <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-parchment/50" title="Empates">PE</th>
-                    <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-danger/80" title="Partidos perdidos">PP</th>
-                    <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-parchment/50" title="Juegos ganados">JG</th>
-                    <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-parchment/50" title="Juegos perdidos">JP</th>
-                    <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-parchment/50" title="Diferencia">Dif</th>
+                    {isCommander ? (
+                      <>
+                        <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-parchment/50" title="Mesas jugadas">PJ</th>
+                        <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-success/80" title="Mesas ganadas">PG</th>
+                        <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-parchment/50" title="Empates">PE</th>
+                      </>
+                    ) : (
+                      <>
+                        <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-parchment/50" title="Partidos jugados">PJ</th>
+                        <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-success/80" title="Partidos ganados">PG</th>
+                        <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-parchment/50" title="Empates">PE</th>
+                        <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-danger/80" title="Partidos perdidos">PP</th>
+                        <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-parchment/50" title="Juegos ganados">JG</th>
+                        <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-parchment/50" title="Juegos perdidos">JP</th>
+                        <th className="px-2 py-2.5 text-center text-[10px] font-semibold tracking-wide text-parchment/50" title="Diferencia">Dif</th>
+                      </>
+                    )}
                     <th className="px-2 py-2.5 text-center text-[10px] font-bold tracking-wider text-gold uppercase">Pts</th>
                   </tr>
                 </thead>
@@ -122,13 +134,23 @@ export function StandingsTable({ tournament, hasResults, notify }: StandingsTabl
                         <td className="px-2 py-2.5 text-left font-body text-[13px] font-semibold whitespace-nowrap text-parchment">
                           {row.name}
                         </td>
-                        <td className="px-2 py-2.5 text-center text-parchment/45">{row.pj}</td>
-                        <td className="px-2 py-2.5 text-center font-semibold text-success">{row.pg}</td>
-                        <td className="px-2 py-2.5 text-center text-parchment/35">{row.pe}</td>
-                        <td className="px-2 py-2.5 text-center font-semibold text-danger">{row.pp}</td>
-                        <td className="px-2 py-2.5 text-center text-parchment/45">{row.jg}</td>
-                        <td className="px-2 py-2.5 text-center text-parchment/45">{row.jp}</td>
-                        <td className="px-2 py-2.5 text-center text-parchment/45">{row.diff}</td>
+                        {isCommander ? (
+                          <>
+                            <td className="px-2 py-2.5 text-center text-parchment/45">{row.pj}</td>
+                            <td className="px-2 py-2.5 text-center font-semibold text-success">{row.pg}</td>
+                            <td className="px-2 py-2.5 text-center text-parchment/35">{row.pe}</td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="px-2 py-2.5 text-center text-parchment/45">{row.pj}</td>
+                            <td className="px-2 py-2.5 text-center font-semibold text-success">{row.pg}</td>
+                            <td className="px-2 py-2.5 text-center text-parchment/35">{row.pe}</td>
+                            <td className="px-2 py-2.5 text-center font-semibold text-danger">{row.pp}</td>
+                            <td className="px-2 py-2.5 text-center text-parchment/45">{row.jg}</td>
+                            <td className="px-2 py-2.5 text-center text-parchment/45">{row.jp}</td>
+                            <td className="px-2 py-2.5 text-center text-parchment/45">{row.diff}</td>
+                          </>
+                        )}
                         <td className="px-2 py-2.5 text-center text-sm font-bold text-gold">{row.pts}</td>
                       </tr>
                     );

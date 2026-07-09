@@ -1,5 +1,6 @@
 import type { Tournament } from "../../types";
 import { STATUS_LABELS } from "../../lib/format";
+import { GAME_FORMAT_LABELS, GAME_FORMAT_RULES_URL } from "../../lib/gameFormats";
 import { GRADIENT_TEXT_GOLD } from "../../lib/designSystem";
 import { Button } from "../shared/Button";
 
@@ -39,6 +40,23 @@ export function TournamentHeader({
                 {STATUS_LABELS[tournament.status]}
               </span>
               <span>{tournament.players.length} jugadores</span>
+              {tournament.gameFormat !== "draft" && (
+                <>
+                  <span className="rounded bg-parchment/10 px-2 py-0.5 font-sans text-[10px] font-bold tracking-wide text-parchment/70 uppercase">
+                    {GAME_FORMAT_LABELS[tournament.gameFormat]}
+                  </span>
+                  {GAME_FORMAT_RULES_URL[tournament.gameFormat] && (
+                    <a
+                      href={GAME_FORMAT_RULES_URL[tournament.gameFormat]}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-gold/70 underline decoration-dotted underline-offset-2 hover:text-gold"
+                    >
+                      📖 Reglas ↗
+                    </a>
+                  )}
+                </>
+              )}
               <span className="hidden text-parchment/30 sm:inline">Hosted by Fernando Tuquina</span>
             </div>
           </div>

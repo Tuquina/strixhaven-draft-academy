@@ -90,7 +90,13 @@ export function sortColors(colors: ManaColor[]): ManaColor[] {
   );
 }
 
-export function getColorCombo(colors: ManaColor[]): ColorCombo {
+/**
+ * `includeCollege` gates the Strixhaven college flavor (name prefix + theming) —
+ * it only makes sense for Draft (a Strixhaven-limited-set mode). Standard/Pioneer/
+ * Brawl/Commander players still get their guild name (e.g. "Golgari"), just without
+ * the "Witherbloom — " college prefix.
+ */
+export function getColorCombo(colors: ManaColor[], includeCollege = true): ColorCombo {
   const sorted = sortColors(colors);
   const key = sorted.join("");
 
@@ -102,9 +108,9 @@ export function getColorCombo(colors: ManaColor[]): ColorCombo {
   }
   if (sorted.length === 2) {
     const info = TWO_COLOR[key];
-    return info
-      ? { name: info.collegeName || info.name, college: info.college }
-      : { name: key, college: null };
+    if (!info) return { name: key, college: null };
+    if (!includeCollege) return { name: info.name, college: null };
+    return { name: info.collegeName || info.name, college: info.college };
   }
   if (sorted.length === 3) {
     return { name: THREE_COLOR[key] || key, college: null };

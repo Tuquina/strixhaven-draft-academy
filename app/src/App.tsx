@@ -19,6 +19,7 @@ function App() {
     removePlayer,
     generateSchedule,
     saveResult,
+    savePodResult,
     finalizeTournament,
     reopenTournament,
     exportTournament,
@@ -68,8 +69,9 @@ function App() {
           onBack={() => setCurrentTournamentId(null)}
           onAddOrUpdatePlayer={(form) => addOrUpdatePlayer(currentTournament.id, form)}
           onRemovePlayer={(playerId) => removePlayer(currentTournament.id, playerId)}
-          onGenerateSchedule={() => generateSchedule(currentTournament.id)}
+          onGenerateSchedule={(roundsCount) => generateSchedule(currentTournament.id, roundsCount)}
           onSaveResult={(matchId, result) => saveResult(currentTournament.id, matchId, result)}
+          onSavePodResult={(podId, result) => savePodResult(currentTournament.id, podId, result)}
           onFinalize={() => finalizeTournament(currentTournament.id)}
           onReopen={() => reopenTournament(currentTournament.id)}
           onExport={() => exportTournament(currentTournament)}

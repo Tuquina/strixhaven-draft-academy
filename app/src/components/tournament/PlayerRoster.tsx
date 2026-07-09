@@ -4,6 +4,7 @@ import type { PlayerFormInput } from "../../hooks/useTournaments";
 import { getColorCombo } from "../../lib/colors";
 import { playerCountMessage } from "../../lib/format";
 import { NOTE_VERDANT } from "../../lib/designSystem";
+import { DEFAULT_COMMANDER_ROUNDS, DEFAULT_POD_SIZE, distributePodSizes, isMultiplayerFormat, MIN_POD_SIZE } from "../../lib/gameFormats";
 import { PlayerForm } from "./PlayerForm";
 import { PlayerCard } from "./PlayerCard";
 import { Button } from "../shared/Button";
@@ -15,8 +16,14 @@ interface PlayerRosterProps {
   tournament: Tournament;
   onAddOrUpdatePlayer: (form: PlayerFormInput) => void;
   onRemovePlayer: (playerId: string) => void;
-  onGenerateSchedule: () => void;
+  onGenerateSchedule: (roundsCount?: number) => void;
   notify: (text: string) => void;
+}
+
+function podSizeHint(playerCount: number): string {
+  const sizes = distributePodSizes(playerCount, DEFAULT_POD_SIZE);
+  if (sizes.length <= 1) return `Con ${playerCount} jugadores se arma una sola mesa.`;
+  return `Con ${playerCount} jugadores se armarán mesas de ${sizes.join(", ")}.`;
 }
 
 export function PlayerRoster({
@@ -28,11 +35,15 @@ export function PlayerRoster({
 }: PlayerRosterProps) {
   const [form, setForm] = useState<PlayerFormInput>(EMPTY_FORM);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [roundsCount, setRoundsCount] = useState(DEFAULT_COMMANDER_ROUNDS);
 
   const canEdit = tournament.status !== "finished";
   const playerCount = tournament.players.length;
-  const countMsg = playerCountMessage(playerCount);
-  const formCombo = getColorCombo(form.colors);
+  const isCommander = isMultiplayerFormat(tournament.gameFormat);
+  const countMsg = tournament.gameFormat === "draft" ? playerCountMessage(playerCount) : "";
+  const commanderHint = isCommander && playerCount >= MIN_POD_SIZE ? podSizeHint(playerCount) : "";
+  const canGenerate = isCommander ? playerCount >= MIN_POD_SIZE : playerCount >= 2;
+  const formCombo = getColorCombo(form.colors, tournament.gameFormat === "draft");
 
   const toggleColor = (c: ManaColor) => {
     setForm((f) => ({
@@ -68,9 +79,9 @@ export function PlayerRoster({
         />
       )}
 
-      {countMsg && (
+      {(countMsg || commanderHint) && (
         <div className={`${NOTE_VERDANT} px-3 py-2.5`}>
-          {countMsg}
+          {countMsg || commanderHint}
         </div>
       )}
 
@@ -87,15 +98,30 @@ export function PlayerRoster({
         />
       ))}
 
-      {canEdit && playerCount >= 2 && tournament.status === "drafting" && (
-        <Button
-          variant="success"
-          fullWidth
-          className="mt-1 py-3.5 font-heading text-sm tracking-wide"
-          onClick={onGenerateSchedule}
-        >
-          Generar fixture
-        </Button>
+      {canEdit && canGenerate && tournament.status === "drafting" && (
+        <div className="flex flex-col gap-2">
+          {isCommander && (
+            <label className="flex items-center justify-between gap-2 font-sans text-xs font-semibold text-parchment/40">
+              Rondas
+              <input
+                type="number"
+                min={1}
+                max={10}
+                value={roundsCount}
+                onChange={(e) => setRoundsCount(Math.max(1, Math.min(10, Number(e.target.value) || 1)))}
+                className="w-16 rounded-md border border-white/10 bg-black/30 px-2 py-1.5 text-center font-body text-sm text-parchment"
+              />
+            </label>
+          )}
+          <Button
+            variant="success"
+            fullWidth
+            className="mt-1 py-3.5 font-heading text-sm tracking-wide"
+            onClick={() => onGenerateSchedule(isCommander ? roundsCount : undefined)}
+          >
+            Generar fixture
+          </Button>
+        </div>
       )}
 
       {playerCount === 0 && (

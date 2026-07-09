@@ -72,3 +72,9 @@ export function formatResultText(
   if (isDraw) return `Empate ${gamesA}–${gamesB}`;
   return `${winnerName ?? "?"} ganó ${gamesA}–${gamesB}`;
 }
+
+/** Commander pods have no game score — just a winner or a group draw. */
+export function formatPodResultText(isDraw: boolean, winnerName: string | null): string {
+  if (isDraw) return "Empate";
+  return `${winnerName ?? "?"} ganó`;
+}
