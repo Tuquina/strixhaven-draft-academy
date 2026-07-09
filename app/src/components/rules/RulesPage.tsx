@@ -1,5 +1,5 @@
 import { FAN_CONTENT_NOTICE } from "../../lib/legal";
-import { GRADIENT_TEXT_GOLD, GRADIENT_TEXT_HERO } from "../../lib/gradients";
+import { GRADIENT_TEXT_GOLD, GRADIENT_TEXT_HERO, PANEL, PANEL_GOLD } from "../../lib/designSystem";
 
 interface RulesPageProps {
   onBack: () => void;
@@ -72,7 +72,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
           {SECTIONS.map((section) => (
             <section
               key={section.title}
-              className="rounded-xl border border-gold/12 bg-arcane-violet/8 p-4 backdrop-blur-sm sm:p-6"
+              className={`${PANEL} p-4 sm:p-6`}
             >
               <h3 className={`${GRADIENT_TEXT_GOLD} m-0 mb-2 font-heading-decorative text-lg font-bold`}>
                 {section.title}
@@ -88,7 +88,7 @@ export function RulesPage({ onBack }: RulesPageProps) {
           href={OFFICIAL_RULES_URL}
           target="_blank"
           rel="noreferrer"
-          className="mt-8 flex items-center justify-between gap-3 rounded-xl border border-gold/25 bg-gold/10 p-4 no-underline backdrop-blur-sm transition-colors hover:bg-gold/16 sm:p-5"
+          className={`${PANEL_GOLD} mt-8 flex items-center justify-between gap-3 p-4 no-underline transition-colors hover:bg-gold/16 sm:p-5`}
         >
           <div className="min-w-0">
             <div className="font-sans text-[11px] font-bold tracking-[2px] text-gold uppercase">

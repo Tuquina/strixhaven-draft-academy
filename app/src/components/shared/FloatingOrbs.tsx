@@ -3,8 +3,8 @@ import { useMemo } from "react";
 // Bright core fading through the orb color — reads as a small magical
 // sparkle rather than a flat blurred blob.
 const COLORS = [
-  "rgba(0, 220, 200, 1)", // teal
-  "rgba(160, 90, 235, 1)", // purple
+  "rgba(0, 220, 200, 1)", // teal (academy sky)
+  "rgba(232, 212, 77, 1)", // verdant lime (hero title top)
   "rgba(230, 190, 60, 1)", // gold
   "rgba(60, 210, 100, 1)", // green
 ];

@@ -7,22 +7,42 @@
   --font-garamond: "Cormorant Garamond", serif;
   --font-body: "Crimson Text", Georgia, serif;
 
-  /* Strixhaven Draft Academy palette */
+  /* Strixhaven Draft Academy palette — see app/DESIGN_SYSTEM.md for usage rules.
+     Two accent families carry the whole UI: parchment/gold (structure, actions)
+     and verdant green (the hero-title family: life, activity, tips). */
   --color-background-main: #101522;
   --color-background-panel: #1a2133;
+
+  /* Parchment ramp (body text, glass surfaces) */
+  --color-parchment-light: #f0e6d0;
   --color-parchment: #e9d8b4;
   --color-parchment-dark: #c8ad7f;
+
+  /* Gold ramp (primary actions, finished state, borders) */
+  --color-gold-bright: #d4af37;
   --color-gold: #c89b3c;
   --color-gold-dark: #a07d2e;
+  --color-gold-deep: #b8960c;
   --color-ink: #16120d;
-  --color-arcane-blue: #3fa7ff;
-  --color-arcane-violet: #9d6bff;
+
+  /* Verdant ramp — sampled from the hero title gradient (GRADIENT_TEXT_HERO) */
+  --color-verdant-lime: #e8d44d;
+  --color-verdant-light: #8cc63f;
+  --color-verdant: #3ea33e;
+  --color-verdant-dark: #2d7a2e;
+
+  /* Status/semantic */
   --color-success: #4e9f3d;
   --color-success-dark: #3a7e2e;
   --color-danger: #b74134;
   --color-danger-dark: #9e372d;
   --color-silver: #c0c0c0;
   --color-bronze: #cd7f32;
+
+  /* Decorative-only arcana accents (confetti, orbs). Not for UI chrome —
+     panels, badges and headings stay in the parchment/gold/verdant families. */
+  --color-arcane-blue: #3fa7ff;
+  --color-arcane-violet: #9d6bff;
 
   /* Mana chip colors */
   --color-mana-w: #f9faf4;

@@ -3,7 +3,17 @@ import type { Tournament } from "../../types";
 import type { CreateTournamentInput, SyncStatus } from "../../hooks/useTournaments";
 import { calculateStandings } from "../../lib/standings";
 import { FAN_CONTENT_NOTICE } from "../../lib/legal";
-import { GRADIENT_TEXT_GOLD, GRADIENT_TEXT_HERO, GRADIENT_TEXT_SUCCESS, GRADIENT_TEXT_VIOLET } from "../../lib/gradients";
+import {
+  BTN_CTA,
+  BTN_GLASS,
+  BTN_GLASS_MUTED,
+  GRADIENT_TEXT_GOLD,
+  GRADIENT_TEXT_HERO,
+  GRADIENT_TEXT_PARCHMENT,
+  GRADIENT_TEXT_SUCCESS,
+  PANEL_VERDANT,
+  SECTION_HEADING,
+} from "../../lib/designSystem";
 import { TournamentCard } from "./TournamentCard";
 import { CreateTournamentModal } from "./CreateTournamentModal";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
@@ -41,7 +51,7 @@ const SECTIONS: {
   titleGradient: string;
 }[] = [
   { status: "active", title: "Torneos activos", dotClass: "bg-success", titleGradient: GRADIENT_TEXT_SUCCESS },
-  { status: "drafting", title: "Torneos en preparación", dotClass: "bg-arcane-violet", titleGradient: GRADIENT_TEXT_VIOLET },
+  { status: "drafting", title: "Torneos en preparación", dotClass: "bg-parchment", titleGradient: GRADIENT_TEXT_PARCHMENT },
   { status: "finished", title: "Torneos finalizados", dotClass: "bg-gold", titleGradient: GRADIENT_TEXT_GOLD },
 ];
 
@@ -75,7 +85,7 @@ export function TournamentDashboard({
     <div className="flex min-h-screen flex-col">
       <button
         onClick={onShowRules}
-        className="fixed top-3 left-3 z-40 cursor-pointer rounded-md border border-[#f0e6d0]/12 bg-[#f0e6d0]/8 px-3 py-2 font-heading text-xs font-semibold tracking-wide text-[#f0e6d0]/60 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f0e6d0]/30 hover:bg-[#f0e6d0]/12 hover:text-[#f0e6d0] sm:top-5 sm:left-5 sm:px-5 sm:py-3 sm:text-[13px]"
+        className={`${BTN_GLASS_MUTED} fixed top-3 left-3 z-40 px-3 py-2 text-xs sm:top-5 sm:left-5 sm:px-5 sm:py-3 sm:text-[13px]`}
       >
         <span className="sm:hidden">📋</span>
         <span className="hidden sm:inline">📋 Reglas del Draft</span>
@@ -83,7 +93,7 @@ export function TournamentDashboard({
 
       <button
         onClick={onShowRulebook}
-        className="fixed top-3 right-3 z-40 cursor-pointer rounded-md border border-[#f0e6d0]/12 bg-[#f0e6d0]/8 px-3 py-2 font-heading text-xs font-semibold tracking-wide text-[#f0e6d0]/60 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f0e6d0]/30 hover:bg-[#f0e6d0]/12 hover:text-[#f0e6d0] sm:top-5 sm:right-5 sm:px-5 sm:py-3 sm:text-[13px]"
+        className={`${BTN_GLASS_MUTED} fixed top-3 right-3 z-40 px-3 py-2 text-xs sm:top-5 sm:right-5 sm:px-5 sm:py-3 sm:text-[13px]`}
       >
         <span className="sm:hidden">📘</span>
         <span className="hidden sm:inline">📘 Manual de Magic</span>
@@ -96,7 +106,7 @@ export function TournamentDashboard({
         <h1 className={`${GRADIENT_TEXT_HERO} m-0 font-heading-decorative text-[clamp(28px,7vw,56px)] leading-[1.15] font-black tracking-wide animate-[heroTitleGlow_4s_ease-in-out_infinite]`}>
           Strixhaven Draft Academy
         </h1>
-        <div className="mx-auto my-5 h-0.5 w-15 bg-gradient-to-r from-transparent via-[#5cb338] to-transparent" />
+        <div className="mx-auto my-5 h-0.5 w-15 bg-gradient-to-r from-transparent via-verdant-light to-transparent" />
         <p className="m-0 font-garamond text-lg font-semibold text-parchment/85 [text-shadow:0_1px_6px_rgba(0,0,0,0.7)] sm:text-xl">
           Hosted by Fernando Tuquina
         </p>
@@ -112,19 +122,19 @@ export function TournamentDashboard({
         <div className="mb-8 flex flex-wrap justify-center gap-2 sm:gap-4">
           <button
             onClick={() => setShowCreateModal(true)}
-            className="cursor-pointer rounded-md border-2 border-gold/60 bg-[linear-gradient(135deg,#d4af37,#b8960c)] px-5 py-3 font-heading text-sm font-bold tracking-[1.5px] text-[#1a1535] uppercase shadow-[0_4px_20px_rgba(212,175,55,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_30px_rgba(212,175,55,0.45)] sm:px-8 sm:py-3.5"
+            className={`${BTN_CTA} px-5 py-3 text-sm sm:px-8 sm:py-3.5`}
           >
             ✦ Crear Nuevo Torneo
           </button>
           <button
             onClick={handleImportClick}
-            className="cursor-pointer rounded-md border border-gold/25 bg-[#f0e6d0]/8 px-4 py-3 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/50 hover:bg-[#f0e6d0]/15 sm:px-7 sm:py-3.5"
+            className={`${BTN_GLASS} px-4 py-3 text-[13px] sm:px-7 sm:py-3.5`}
           >
             Importar JSON
           </button>
           <button
             onClick={() => setShowTimerModal(true)}
-            className="cursor-pointer rounded-md border border-gold/25 bg-[#f0e6d0]/8 px-4 py-3 font-heading text-[13px] font-semibold tracking-wide text-[#f0e6d0] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/50 hover:bg-[#f0e6d0]/15 sm:px-7 sm:py-3.5"
+            className={`${BTN_GLASS} px-4 py-3 text-[13px] sm:px-7 sm:py-3.5`}
           >
             ⏱ Temporizador
           </button>
@@ -144,7 +154,7 @@ export function TournamentDashboard({
           if (list.length === 0) return null;
           return (
             <div key={section.status} className="mb-8">
-              <h2 className={`${section.titleGradient} m-0 mb-4 flex items-center gap-2 font-heading-decorative text-base font-bold tracking-[2px] uppercase`}>
+              <h2 className={`${section.titleGradient} ${SECTION_HEADING} m-0 mb-4 flex items-center gap-2 text-base`}>
                 <span className={`inline-block h-2 w-2 rounded-full ${section.dotClass}`} />
                 {section.title}
               </h2>
@@ -166,16 +176,22 @@ export function TournamentDashboard({
           );
         })}
 
-        <div className="mt-10 rounded-xl border border-arcane-violet/12 bg-arcane-violet/8 p-6 backdrop-blur-sm">
-          <h3 className="m-0 mb-3 font-sans text-[13px] font-bold tracking-[2px] text-arcane-violet uppercase">
+        <div className={`${PANEL_VERDANT} mt-10 p-6`}>
+          <h3 className={`${GRADIENT_TEXT_SUCCESS} ${SECTION_HEADING} m-0 mb-3 text-sm`}>
             Tips para el draft
           </h3>
-          <div className="flex flex-col gap-1.5 font-sans text-sm leading-relaxed text-parchment/45">
-            <span>✦ Mazo recomendado: 40 cartas.</span>
-            <span>✦ Base típica: 17 tierras y 23 hechizos.</span>
-            <span>✦ Las tierras no básicas solo cuentan si las drafteaste.</span>
-            <span>✦ En draft casual, 5 jugadores funciona bien con round robin.</span>
-            <span>✦ 8 jugadores es el pod clásico ideal.</span>
+          <div className="flex flex-col gap-1.5 font-sans text-sm leading-relaxed text-parchment/60">
+            {[
+              "Mazo recomendado: 40 cartas.",
+              "Base típica: 17 tierras y 23 hechizos.",
+              "Las tierras no básicas solo cuentan si las drafteaste.",
+              "En draft casual, 5 jugadores funciona bien con round robin.",
+              "8 jugadores es el pod clásico ideal.",
+            ].map((tip) => (
+              <span key={tip}>
+                <span className="text-verdant-light/80">✦</span> {tip}
+              </span>
+            ))}
           </div>
         </div>
       </main>

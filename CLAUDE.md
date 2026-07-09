@@ -70,8 +70,11 @@ npm run preview      # preview production build
 ## Conventions
 
 - Keep all user-facing strings in Spanish; identifiers, comments, and commit messages in English.
-- Match the visual language already established (parchment/ink/arcane academy theme) — see
-  `project/Strixhaven Draft Academy.dc.html` and `src/index.css` for the design tokens.
+- Match the visual language already established (parchment/gold/verdant arcane academy theme).
+  The design system is documented in `app/DESIGN_SYSTEM.md`: color/font tokens live in
+  `app/src/index.css` (`@theme`), composed class recipes (gradient text, panels, buttons,
+  headings) in `app/src/lib/designSystem.ts`. Build new UI from those — never hardcode hex
+  colors in components; violet/blue arcana are decorative-only (confetti/orbs), not UI chrome.
 
 ### Use of official Wizards of the Coast artwork/documents
 

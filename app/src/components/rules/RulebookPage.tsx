@@ -1,5 +1,5 @@
 import { FAN_CONTENT_NOTICE } from "../../lib/legal";
-import { GRADIENT_TEXT_GOLD, GRADIENT_TEXT_HERO } from "../../lib/gradients";
+import { GRADIENT_TEXT_GOLD, GRADIENT_TEXT_HERO, PANEL_GOLD } from "../../lib/designSystem";
 
 interface RulebookPageProps {
   onBack: () => void;
@@ -62,7 +62,7 @@ export function RulebookPage({ onBack }: RulebookPageProps) {
           href={RULEBOOK_PDF_URL}
           target="_blank"
           rel="noreferrer"
-          className="flex flex-col items-center gap-3 rounded-xl border border-gold/25 bg-gold/10 p-8 text-center no-underline backdrop-blur-sm transition-colors hover:bg-gold/16 sm:hidden"
+          className={`${PANEL_GOLD} flex flex-col items-center gap-3 p-8 text-center no-underline transition-colors hover:bg-gold/16 sm:hidden`}
         >
           <span className="text-5xl">📖</span>
           <span className="font-heading text-base font-bold text-gold">Abrir la guía completa</span>

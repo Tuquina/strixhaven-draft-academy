@@ -1,6 +1,6 @@
 import type { Tournament } from "../../types";
 import { STATUS_LABELS } from "../../lib/format";
-import { GRADIENT_TEXT_GOLD } from "../../lib/gradients";
+import { GRADIENT_TEXT_GOLD } from "../../lib/designSystem";
 import { Button } from "../shared/Button";
 
 interface TournamentHeaderProps {

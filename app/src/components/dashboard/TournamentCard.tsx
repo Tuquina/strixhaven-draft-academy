@@ -1,11 +1,11 @@
 import type { Tournament } from "../../types";
 import { StatusBadge } from "../shared/StatusBadge";
 import { Button } from "../shared/Button";
-import { GRADIENT_TEXT_GOLD } from "../../lib/gradients";
+import { GRADIENT_TEXT_GOLD } from "../../lib/designSystem";
 
 const BORDER_CLASSES: Record<Tournament["status"], string> = {
   active: "border-success/25",
-  drafting: "border-arcane-violet/20",
+  drafting: "border-parchment/20",
   finished: "border-gold/20",
 };
 

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { GRADIENT_TEXT_GOLD } from "../../lib/gradients";
+import { GRADIENT_TEXT_GOLD, PANEL } from "../../lib/designSystem";
 
 interface EmptyStateProps {
   icon?: ReactNode;
@@ -18,7 +18,7 @@ export function EmptyState({ icon, title, subtitle, compact }: EmptyStateProps) 
     );
   }
   return (
-    <div className="animate-fade-in rounded-xl border border-gold/12 bg-arcane-violet/8 px-5 py-20 text-center backdrop-blur-sm">
+    <div className={`${PANEL} animate-fade-in px-5 py-20 text-center`}>
       {icon && (
         <div className="mb-5 text-6xl opacity-80 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]">
           {icon}

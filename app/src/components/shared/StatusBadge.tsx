@@ -2,7 +2,7 @@ import type { TournamentStatus } from "../../types";
 import { STATUS_LABELS } from "../../lib/format";
 
 const STATUS_CLASSES: Record<TournamentStatus, string> = {
-  drafting: "bg-arcane-violet/15 text-arcane-violet",
+  drafting: "bg-parchment/12 text-parchment/85",
   active: "bg-success/15 text-success",
   finished: "bg-gold/15 text-gold",
 };

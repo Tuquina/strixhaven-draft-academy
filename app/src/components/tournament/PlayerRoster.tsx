@@ -3,6 +3,7 @@ import type { ManaColor, Tournament } from "../../types";
 import type { PlayerFormInput } from "../../hooks/useTournaments";
 import { getColorCombo } from "../../lib/colors";
 import { playerCountMessage } from "../../lib/format";
+import { NOTE_VERDANT } from "../../lib/designSystem";
 import { PlayerForm } from "./PlayerForm";
 import { PlayerCard } from "./PlayerCard";
 import { Button } from "../shared/Button";
@@ -68,7 +69,7 @@ export function PlayerRoster({
       )}
 
       {countMsg && (
-        <div className="rounded-lg border border-arcane-violet/8 bg-arcane-violet/5 px-3 py-2.5 font-sans text-xs leading-relaxed text-arcane-violet/70">
+        <div className={`${NOTE_VERDANT} px-3 py-2.5`}>
           {countMsg}
         </div>
       )}
