@@ -29,6 +29,7 @@ interface TournamentDashboardProps {
   onImportTournament: (file: File) => Promise<boolean>;
   onShowRules: () => void;
   onShowRulebook: () => void;
+  onShowCardSearch: () => void;
   notify: (text: string) => void;
 }
 
@@ -64,6 +65,7 @@ export function TournamentDashboard({
   onImportTournament,
   onShowRules,
   onShowRulebook,
+  onShowCardSearch,
   notify,
 }: TournamentDashboardProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -83,13 +85,22 @@ export function TournamentDashboard({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <button
-        onClick={onShowRules}
-        className={`${BTN_GLASS_MUTED} fixed top-3 left-3 z-40 px-3 py-2 text-xs sm:top-5 sm:left-5 sm:px-5 sm:py-3 sm:text-[13px]`}
-      >
-        <span className="sm:hidden">📋</span>
-        <span className="hidden sm:inline">📋 Reglas del Draft</span>
-      </button>
+      <div className="fixed top-3 left-3 z-40 flex flex-wrap gap-2 sm:top-5 sm:left-5 sm:gap-3">
+        <button
+          onClick={onShowRules}
+          className={`${BTN_GLASS_MUTED} px-3 py-2 text-xs sm:px-5 sm:py-3 sm:text-[13px]`}
+        >
+          <span className="sm:hidden">📋</span>
+          <span className="hidden sm:inline">📋 Reglas del Draft</span>
+        </button>
+        <button
+          onClick={onShowCardSearch}
+          className={`${BTN_GLASS_MUTED} px-3 py-2 text-xs sm:px-5 sm:py-3 sm:text-[13px]`}
+        >
+          <span className="sm:hidden">🔍</span>
+          <span className="hidden sm:inline">🔍 Consultar Cartas</span>
+        </button>
+      </div>
 
       <button
         onClick={onShowRulebook}

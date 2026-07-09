@@ -5,6 +5,7 @@ import { TournamentDashboard } from "./components/dashboard/TournamentDashboard"
 import { TournamentDetailPage } from "./components/tournament/TournamentDetailPage";
 import { RulesPage } from "./components/rules/RulesPage";
 import { RulebookPage } from "./components/rules/RulebookPage";
+import { CardSearchPage } from "./components/rules/CardSearchPage";
 import { Notification } from "./components/shared/Notification";
 import { FloatingOrbs } from "./components/shared/FloatingOrbs";
 
@@ -27,6 +28,7 @@ function App() {
   const [currentTournamentId, setCurrentTournamentId] = useState<string | null>(null);
   const [showRules, setShowRules] = useState(false);
   const [showRulebook, setShowRulebook] = useState(false);
+  const [showCardSearch, setShowCardSearch] = useState(false);
 
   const currentTournament = currentTournamentId
     ? tournaments.find((t) => t.id === currentTournamentId) ?? null
@@ -40,8 +42,9 @@ function App() {
 
       {showRules && <RulesPage onBack={() => setShowRules(false)} />}
       {showRulebook && <RulebookPage onBack={() => setShowRulebook(false)} />}
+      {showCardSearch && <CardSearchPage onBack={() => setShowCardSearch(false)} />}
 
-      {!showRules && !showRulebook && !currentTournament && (
+      {!showRules && !showRulebook && !showCardSearch && !currentTournament && (
         <TournamentDashboard
           tournaments={tournaments}
           syncStatus={syncStatus}
@@ -54,11 +57,12 @@ function App() {
           onImportTournament={importTournament}
           onShowRules={() => setShowRules(true)}
           onShowRulebook={() => setShowRulebook(true)}
+          onShowCardSearch={() => setShowCardSearch(true)}
           notify={notify}
         />
       )}
 
-      {!showRules && !showRulebook && currentTournament && (
+      {!showRules && !showRulebook && !showCardSearch && currentTournament && (
         <TournamentDetailPage
           tournament={currentTournament}
           onBack={() => setCurrentTournamentId(null)}

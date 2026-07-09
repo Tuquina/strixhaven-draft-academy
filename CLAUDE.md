@@ -40,6 +40,13 @@ read-only unless the user explicitly asks to update the design bundle itself.
   timers, opened per-match from `MatchCard` or generally from `TournamentHeader`) is deliberately
   session-only local state — it's a live utility clock, not tournament data, so it isn't part of
   `Tournament`/`localStorage`/Supabase and resets on refresh.
+- `src/components/rules/CardSearchPage.tsx` ("Consultar Cartas", opened from the dashboard next to
+  "Reglas del Draft") looks up individual Magic cards via `src/lib/scryfall.ts`, a thin client for
+  the public Scryfall API (see `project/scryfall-mtg-card-api-guide.md`). It calls Scryfall directly
+  from the browser — there's no backend in this app — and caches results in `localStorage` (14-day
+  TTL) so repeat lookups don't hit the network at all. This is intentional: it keeps card lookups
+  from ever touching the Vercel/Supabase free-tier quota, no matter how many players use it during
+  a draft.
 
 ### Cloud sync (Supabase)
 
@@ -89,7 +96,6 @@ this private, free, non-commercial fan project) explicitly opted into this. That
   footer of every page — don't reword or drop it.
 - Any copyright/artist notices baked into an incorporated asset (e.g. the watermark in the
   background image) must not be cropped out or edited away.
-- Don't add official Wizards logos (Magic logo, Planeswalker symbol, real mana
-  symbols) as UI elements — those need separate
-  written permission the policy doesn't grant. The app's mana-color badges are original,
-  custom-drawn UI, not the official symbols — keep it that way.
+- Don't add official Wizards logos (Magic logo, Planeswalker symbol as UI elements — those need separate
+  written permission the policy doesn't grant.
+- Allow use mana symbols.
