@@ -19,7 +19,7 @@ export function MatchCard({ match, canEdit, format, allowDraws, onOpenResult, on
 
   if (match.isBye) {
     return (
-      <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-md bg-black/12 px-3 py-2.5">
+      <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-md bg-black/25 px-3 py-2.5">
         <span className="font-sans text-[13px] text-parchment/40 italic">
           Libre: {match.byePlayerName}
         </span>
@@ -28,7 +28,7 @@ export function MatchCard({ match, canEdit, format, allowDraws, onOpenResult, on
   }
 
   return (
-    <div className="flex flex-col items-stretch gap-2 rounded-md bg-black/12 px-3 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-2.5">
+    <div className="flex flex-col items-stretch gap-2 rounded-md bg-black/25 px-3 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-2.5">
       <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
         <span className="font-body text-sm font-semibold text-parchment">{match.playerAName}</span>
         <span className="font-sans text-[11px] text-parchment/25">vs</span>

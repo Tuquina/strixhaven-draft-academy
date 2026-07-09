@@ -13,7 +13,7 @@ interface RoundCardProps {
 
 export function RoundCard({ round, canEdit, format, allowDraws, onOpenResult, onSaveResult }: RoundCardProps) {
   return (
-    <div className="animate-fade-in rounded-[10px] border border-gold/8 bg-white/2.5 p-4">
+    <div className="animate-fade-in rounded-[10px] border border-gold/10 bg-background-panel/45 p-4 backdrop-blur-sm">
       <h3 className="m-0 mb-2.5 border-b border-gold/6 pb-2 font-heading text-sm font-bold text-parchment">
         Ronda {round.number}
       </h3>

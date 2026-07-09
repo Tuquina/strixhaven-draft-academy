@@ -32,11 +32,11 @@ export const COLLEGE_THEMES: Record<
   StrixhavenCollege,
   { accent: string; bg: string }
 > = {
-  Silverquill: { accent: "#A8A8B0", bg: "rgba(168,168,176,0.07)" },
-  Prismari: { accent: "#D3202A", bg: "rgba(63,167,255,0.06)" },
-  Witherbloom: { accent: "#00733E", bg: "rgba(0,115,62,0.06)" },
-  Lorehold: { accent: "#C89B3C", bg: "rgba(200,155,60,0.06)" },
-  Quandrix: { accent: "#0E9AAB", bg: "rgba(14,154,171,0.06)" },
+  Silverquill: { accent: "#A8A8B0", bg: "rgba(168,168,176,0.16)" },
+  Prismari: { accent: "#D3202A", bg: "rgba(63,167,255,0.14)" },
+  Witherbloom: { accent: "#00733E", bg: "rgba(0,115,62,0.16)" },
+  Lorehold: { accent: "#C89B3C", bg: "rgba(200,155,60,0.16)" },
+  Quandrix: { accent: "#0E9AAB", bg: "rgba(14,154,171,0.16)" },
 };
 
 interface TwoColorInfo {

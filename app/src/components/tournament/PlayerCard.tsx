@@ -24,10 +24,12 @@ export function PlayerCard({ player, comboName, canEdit, onEdit, onRemove }: Pla
               background: theme.bg,
               border: `1px solid ${theme.accent}`,
               borderLeft: `4px solid ${theme.accent}`,
+              backdropFilter: "blur(4px)",
             }
           : {
-              background: "rgba(255,255,255,0.025)",
-              border: "1px solid rgba(200,155,60,0.1)",
+              background: "rgba(26,33,51,0.45)",
+              border: "1px solid rgba(200,155,60,0.12)",
+              backdropFilter: "blur(4px)",
             }
       }
     >

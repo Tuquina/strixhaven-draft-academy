@@ -15,7 +15,7 @@ export function Modal({ onClose, maxWidth = "460px", children }: ModalProps) {
       }}
     >
       <div
-        className="max-h-[92vh] w-full overflow-y-auto rounded-2xl border border-gold/20 bg-background-panel p-4 shadow-[0_8px_40px_rgba(0,0,0,0.5)] sm:p-7"
+        className="max-h-[92vh] w-full overflow-y-auto rounded-2xl border border-gold/20 bg-background-panel/90 p-4 shadow-[0_8px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:p-7"
         style={{ maxWidth }}
       >
         {children}

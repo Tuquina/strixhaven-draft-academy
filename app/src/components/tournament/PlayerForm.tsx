@@ -29,7 +29,7 @@ export function PlayerForm({
   onCancel,
 }: PlayerFormProps) {
   return (
-    <div className="flex flex-col gap-2.5 rounded-[10px] border border-gold/10 bg-white/2.5 p-4.5">
+    <div className="flex flex-col gap-2.5 rounded-[10px] border border-gold/12 bg-background-panel/45 p-4.5 backdrop-blur-sm">
       <input
         placeholder="Nombre del jugador"
         value={name}
