@@ -122,7 +122,7 @@ export function TournamentDetailPage({
         className={
           isMobile
             ? "flex flex-col gap-5 p-4"
-            : "mx-auto grid w-full max-w-[1440px] grid-cols-[340px_1fr_360px] gap-6 px-8 py-6"
+            : "mx-auto grid w-full max-w-[1440px] grid-cols-[340px_1fr_360px] items-start gap-6 px-8 py-6"
         }
       >
         {showPlayers && (
