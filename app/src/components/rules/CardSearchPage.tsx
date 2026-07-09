@@ -2,7 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { FAN_CONTENT_NOTICE } from "../../lib/legal";
 import { BTN_CTA, GRADIENT_TEXT_GOLD, GRADIENT_TEXT_HERO, PANEL } from "../../lib/designSystem";
 import { MANA_CHIP_COLORS } from "../../lib/colors";
-import { autocompleteCardName, fetchCardByName, ScryfallNotFoundError, type NormalizedCard } from "../../lib/scryfall";
+import {
+  autocompleteCardName,
+  autocompleteSpanishCardName,
+  fetchCardByName,
+  ScryfallNotFoundError,
+  type NormalizedCard,
+} from "../../lib/scryfall";
 
 interface CardSearchPageProps {
   onBack: () => void;
@@ -63,9 +69,12 @@ export function CardSearchPage({ onBack }: CardSearchPageProps) {
     }
     const controller = new AbortController();
     const timeout = setTimeout(() => {
-      autocompleteCardName(query, controller.signal)
-        .then(setSuggestions)
-        .catch(() => {});
+      Promise.all([
+        autocompleteCardName(query, controller.signal).catch(() => []),
+        autocompleteSpanishCardName(query, controller.signal).catch(() => []),
+      ]).then(([enNames, esNames]) => {
+        setSuggestions(Array.from(new Set([...esNames, ...enNames])).slice(0, 10));
+      });
     }, 250);
     return () => {
       clearTimeout(timeout);
@@ -141,7 +150,7 @@ export function CardSearchPage({ onBack }: CardSearchPageProps) {
               }}
               onFocus={() => setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-              placeholder="Nombre de la carta (ej: Lightning Bolt)"
+              placeholder="Nombre de la carta, en inglés o español"
               className="w-full rounded-lg border border-white/10 bg-black/30 px-3.5 py-2.5 font-body text-base text-parchment"
             />
             {showSuggestions && suggestions.length > 0 && (

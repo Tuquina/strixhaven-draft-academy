@@ -283,9 +283,54 @@ export async function autocompleteCardName(query: string, signal?: AbortSignal):
 }
 
 /**
- * Resolves a card by name, preferring a Spanish-language print (so oracle text/type
- * line show in Spanish) and falling back to the English default when no Spanish print
- * exists. Checks localStorage first; every successful lookup is cached for 14 days.
+ * As-you-type suggestions for Spanish card names. Scryfall's /cards/autocomplete only
+ * knows English (Oracle) names, so Spanish name search needs the general search
+ * endpoint instead, restricted to lang:es and read for `printed_name`.
+ */
+export async function autocompleteSpanishCardName(query: string, signal?: AbortSignal): Promise<string[]> {
+  if (query.trim().length < 2) return [];
+  const response = await fetch(
+    `${SEARCH_URL}?q=${encodeURIComponent(`${query} lang:es`)}&unique=cards&order=name`,
+    { signal }
+  );
+  if (!response.ok) return [];
+  const json = (await response.json()) as ScryfallList<ScryfallCard>;
+  const names = (json.data ?? []).map((card) => card.printed_name || card.name);
+  return Array.from(new Set(names)).slice(0, 8);
+}
+
+function cacheAndReturn(rawName: string, normalized: NormalizedCard): NormalizedCard {
+  writeCache(rawName, normalized);
+  writeCache(normalized.name, normalized);
+  return normalized;
+}
+
+/** Exact match against a card's Spanish printed name, e.g. `!"Rayo" lang:es` → Thunderbolt. */
+async function tryExactSpanishMatch(name: string): Promise<NormalizedCard | null> {
+  const response = await scryfallFetch(`${SEARCH_URL}?q=${encodeURIComponent(`!"${name}" lang:es`)}`);
+  if (!response.ok) return null;
+  const json = (await response.json()) as ScryfallList<ScryfallCard>;
+  return json.data?.length ? normalizeCard(json.data[0], true) : null;
+}
+
+/**
+ * Broader (non-exact) Spanish name search, e.g. "anillo sol lang:es" → Sol Ring.
+ * Used only as a last resort, since an un-anchored search can occasionally rank an
+ * unrelated card first for short/ambiguous input — English exact/fuzzy resolution
+ * always gets priority before this runs.
+ */
+async function tryBroadSpanishMatch(name: string): Promise<NormalizedCard | null> {
+  const response = await scryfallFetch(`${SEARCH_URL}?q=${encodeURIComponent(`${name} lang:es`)}`);
+  if (!response.ok) return null;
+  const json = (await response.json()) as ScryfallList<ScryfallCard>;
+  return json.data?.length ? normalizeCard(json.data[0], true) : null;
+}
+
+/**
+ * Resolves a card by name — in English or Spanish — preferring a Spanish-language
+ * print when one matches (so oracle text/type line show in Spanish) and falling back
+ * to the English default otherwise. Checks localStorage first; every successful
+ * lookup is cached for 14 days.
  */
 export async function fetchCardByName(rawName: string): Promise<NormalizedCard> {
   const name = rawName.trim();
@@ -294,23 +339,16 @@ export async function fetchCardByName(rawName: string): Promise<NormalizedCard> 
   const cached = readCache(name);
   if (cached) return cached;
 
-  const esQuery = `!"${name}" lang:es`;
-  const esResponse = await scryfallFetch(`${SEARCH_URL}?q=${encodeURIComponent(esQuery)}`);
-  if (esResponse.ok) {
-    const json = (await esResponse.json()) as ScryfallList<ScryfallCard>;
-    if (json.data?.length) {
-      const normalized = normalizeCard(json.data[0], true);
-      writeCache(name, normalized);
-      writeCache(normalized.name, normalized);
-      return normalized;
-    }
-  }
+  const exactEs = await tryExactSpanishMatch(name);
+  if (exactEs) return cacheAndReturn(name, exactEs);
 
   let enResponse = await scryfallFetch(`${NAMED_URL}?exact=${encodeURIComponent(name)}`);
   if (enResponse.status === 404) {
     enResponse = await scryfallFetch(`${NAMED_URL}?fuzzy=${encodeURIComponent(name)}`);
   }
   if (enResponse.status === 404) {
+    const broadEs = await tryBroadSpanishMatch(name);
+    if (broadEs) return cacheAndReturn(name, broadEs);
     throw new ScryfallNotFoundError(name);
   }
   if (!enResponse.ok) {
@@ -319,7 +357,5 @@ export async function fetchCardByName(rawName: string): Promise<NormalizedCard> 
 
   const card = (await enResponse.json()) as ScryfallCard;
   const normalized = normalizeCard(card, false);
-  writeCache(name, normalized);
-  writeCache(normalized.name, normalized);
-  return normalized;
+  return cacheAndReturn(name, normalized);
 }
