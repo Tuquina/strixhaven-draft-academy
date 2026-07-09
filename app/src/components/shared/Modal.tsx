@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 interface ModalProps {
   onClose: () => void;
@@ -7,7 +8,7 @@ interface ModalProps {
 }
 
 export function Modal({ onClose, maxWidth = "460px", children }: ModalProps) {
-  return (
+  return createPortal(
     <div
       className="animate-fade-in fixed inset-0 z-[1000] flex items-center justify-center bg-black/70 p-3 sm:p-5"
       onMouseDown={(e) => {
@@ -20,6 +21,7 @@ export function Modal({ onClose, maxWidth = "460px", children }: ModalProps) {
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
