@@ -7,6 +7,7 @@ import { DEFAULT_COMMANDER_ROUNDS, DEFAULT_POD_SIZE, isMultiplayerFormat, MIN_PO
 import {
   deleteCloudTournament,
   fetchCloudTournaments,
+  fetchDeletedTournamentIds,
   isCloudConfigured,
   mergeTournaments,
   pushTournament,
@@ -48,18 +49,29 @@ export function useTournaments() {
     isCloudConfigured() ? "syncing" : "disabled"
   );
   const isFirstRun = useRef(true);
+  // Tracks which tournament object references were already pushed, so a
+  // change to one tournament doesn't re-push every other (possibly stale)
+  // tournament sitting untouched in this tab's memory and clobber a newer
+  // cloud update to it made from another device.
+  const prevTournamentsRef = useRef<Tournament[]>(tournaments);
 
   useEffect(() => {
     // Skip persisting the initial load straight back to storage.
     if (isFirstRun.current) {
       isFirstRun.current = false;
+      prevTournamentsRef.current = tournaments;
       return;
     }
     saveTournaments(tournaments);
 
     if (!isCloudConfigured()) return;
+    const prevById = new Map(prevTournamentsRef.current.map((t) => [t.id, t]));
+    const changed = tournaments.filter((t) => prevById.get(t.id) !== t);
+    prevTournamentsRef.current = tournaments;
+    if (changed.length === 0) return;
+
     setSyncStatus("syncing");
-    Promise.all(tournaments.map((t) => pushTournament(t))).then((results) => {
+    Promise.all(changed.map((t) => pushTournament(t))).then((results) => {
       setSyncStatus(results.every(Boolean) ? "synced" : "offline");
     });
   }, [tournaments]);
@@ -70,15 +82,17 @@ export function useTournaments() {
   useEffect(() => {
     if (!isCloudConfigured()) return;
     let cancelled = false;
-    fetchCloudTournaments().then((cloud) => {
-      if (cancelled) return;
-      if (cloud === null) {
-        setSyncStatus("offline");
-        return;
+    Promise.all([fetchCloudTournaments(), fetchDeletedTournamentIds()]).then(
+      ([cloud, deletedIds]) => {
+        if (cancelled) return;
+        if (cloud === null || deletedIds === null) {
+          setSyncStatus("offline");
+          return;
+        }
+        setTournaments((local) => mergeTournaments(local, cloud, deletedIds));
+        setSyncStatus("synced");
       }
-      setTournaments((local) => mergeTournaments(local, cloud));
-      setSyncStatus("synced");
-    });
+    );
     return () => {
       cancelled = true;
     };
