@@ -1,8 +1,10 @@
-import { useRef, useState } from "react";
-import type { Tournament } from "../../types";
+import { useMemo, useRef, useState } from "react";
+import type { GameFormat, Tournament, TournamentStatus } from "../../types";
 import type { CreateTournamentInput, SyncStatus } from "../../hooks/useTournaments";
 import { calculateStandings } from "../../lib/standings";
 import { FAN_CONTENT_NOTICE } from "../../lib/legal";
+import { STATUS_LABELS } from "../../lib/format";
+import { GAME_FORMAT_LABELS } from "../../lib/gameFormats";
 import {
   BTN_CTA,
   BTN_GLASS,
@@ -56,6 +58,14 @@ const SECTIONS: {
   { status: "finished", title: "Torneos finalizados", dotClass: "bg-gold", titleGradient: GRADIENT_TEXT_GOLD },
 ];
 
+const ALL_STATUSES: TournamentStatus[] = ["active", "drafting", "finished"];
+const ALL_FORMATS: GameFormat[] = ["draft", "standard", "pioneer", "brawl", "commander"];
+
+const chipClass = (active: boolean) =>
+  `cursor-pointer rounded-lg border px-3 py-1.5 font-sans text-xs font-semibold whitespace-nowrap ${
+    active ? "border-gold bg-gold/12 text-gold" : "border-white/12 bg-transparent text-parchment/45"
+  }`;
+
 export function TournamentDashboard({
   tournaments,
   syncStatus,
@@ -72,6 +82,29 @@ export function TournamentDashboard({
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [showTimerModal, setShowTimerModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<TournamentStatus | "all">("all");
+  const [formatFilter, setFormatFilter] = useState<GameFormat | "all">("all");
+
+  const isFiltering = searchQuery.trim() !== "" || statusFilter !== "all" || formatFilter !== "all";
+
+  const filteredTournaments = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return tournaments.filter((t) => {
+      const matchesQuery = q === "" || t.name.toLowerCase().includes(q);
+      const matchesStatus = statusFilter === "all" || t.status === statusFilter;
+      const matchesFormat = formatFilter === "all" || t.gameFormat === formatFilter;
+      return matchesQuery && matchesStatus && matchesFormat;
+    });
+  }, [tournaments, searchQuery, statusFilter, formatFilter]);
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("all");
+    setFormatFilter("all");
+  };
 
   const handleImportClick = () => fileInputRef.current?.click();
 
@@ -152,6 +185,61 @@ export function TournamentDashboard({
           <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleFileChange} />
         </div>
 
+        {tournaments.length > 0 && (
+          <div className="mb-8">
+            <div className="flex gap-2">
+              <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar torneo por nombre…"
+                className="w-full min-w-0 flex-1 rounded-lg border border-white/10 bg-black/30 px-3.5 py-2.5 font-body text-base text-parchment sm:text-sm"
+              />
+              <button
+                onClick={() => setShowAdvancedSearch((v) => !v)}
+                className={`${BTN_GLASS_MUTED} shrink-0 px-3.5 py-2.5 text-xs sm:px-5 sm:text-[13px]`}
+              >
+                <span className="sm:hidden">⚙️</span>
+                <span className="hidden sm:inline">⚙️ Búsqueda avanzada</span>
+              </button>
+            </div>
+
+            {showAdvancedSearch && (
+              <div className="mt-3 flex flex-col gap-3 rounded-lg border border-white/8 bg-black/15 p-3.5">
+                <div>
+                  <p className="m-0 mb-1.5 font-sans text-[11px] font-semibold tracking-wide text-parchment/40 uppercase">
+                    Estado
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button className={chipClass(statusFilter === "all")} onClick={() => setStatusFilter("all")}>
+                      Todos
+                    </button>
+                    {ALL_STATUSES.map((s) => (
+                      <button key={s} className={chipClass(statusFilter === s)} onClick={() => setStatusFilter(s)}>
+                        {STATUS_LABELS[s]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="m-0 mb-1.5 font-sans text-[11px] font-semibold tracking-wide text-parchment/40 uppercase">
+                    Tipo de torneo
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button className={chipClass(formatFilter === "all")} onClick={() => setFormatFilter("all")}>
+                      Todos
+                    </button>
+                    {ALL_FORMATS.map((f) => (
+                      <button key={f} className={chipClass(formatFilter === f)} onClick={() => setFormatFilter(f)}>
+                        {GAME_FORMAT_LABELS[f]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {tournaments.length === 0 && (
           <EmptyState
             icon="📜"
@@ -160,8 +248,25 @@ export function TournamentDashboard({
           />
         )}
 
+        {tournaments.length > 0 && isFiltering && filteredTournaments.length === 0 && (
+          <EmptyState
+            icon="🔍"
+            title="Ningún torneo coincide con la búsqueda"
+            subtitle="Probá con otro nombre o ajustá los filtros."
+          />
+        )}
+
+        {isFiltering && filteredTournaments.length > 0 && (
+          <button
+            onClick={clearFilters}
+            className="mb-4 cursor-pointer border-none bg-transparent p-0 font-sans text-xs font-semibold text-gold/70 underline decoration-dotted underline-offset-2 hover:text-gold"
+          >
+            Limpiar filtros
+          </button>
+        )}
+
         {SECTIONS.map((section) => {
-          const list = tournaments.filter((t) => t.status === section.status);
+          const list = filteredTournaments.filter((t) => t.status === section.status);
           if (list.length === 0) return null;
           return (
             <div key={section.status} className="mb-8">

@@ -34,19 +34,40 @@ export function TournamentCard({
 
   return (
     <div
-      className={`animate-fade-in rounded-xl border bg-background-panel/30 p-4 backdrop-blur-sm sm:p-6 ${BORDER_CLASSES[tournament.status]}`}
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
+      className={`animate-fade-in cursor-pointer rounded-xl border bg-background-panel/30 p-4 backdrop-blur-sm transition-colors hover:border-gold/40 sm:p-6 ${BORDER_CLASSES[tournament.status]}`}
     >
       <div className="mb-3 flex items-start justify-between gap-2">
         <h3 className={`${GRADIENT_TEXT_GOLD} m-0 line-clamp-2 min-w-0 font-heading-decorative text-xl font-bold leading-tight`}>
           {tournament.name}
         </h3>
-        <div className="flex shrink-0 flex-col items-end gap-1">
-          <StatusBadge status={tournament.status} />
-          {tournament.gameFormat !== "draft" && (
-            <span className="rounded px-2 py-1 font-sans text-[11px] font-bold tracking-wide text-parchment/50 uppercase">
-              {GAME_FORMAT_LABELS[tournament.gameFormat]}
-            </span>
-          )}
+        <div className="flex shrink-0 items-start gap-1.5">
+          <div className="flex flex-col items-end gap-1">
+            <StatusBadge status={tournament.status} />
+            {tournament.gameFormat !== "draft" && (
+              <span className="rounded px-2 py-1 font-sans text-[11px] font-bold tracking-wide text-parchment/50 uppercase">
+                {GAME_FORMAT_LABELS[tournament.gameFormat]}
+              </span>
+            )}
+          </div>
+          <button
+            aria-label="Eliminar torneo"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="cursor-pointer rounded-lg border border-danger/30 bg-transparent px-2 py-1 text-sm text-danger sm:hidden"
+          >
+            🗑️
+          </button>
         </div>
       </div>
 
@@ -62,11 +83,25 @@ export function TournamentCard({
         </div>
       )}
 
-      <div className="mt-3 flex gap-2">
-        <Button variant="secondary" fullWidth onClick={onOpen}>
+      <div className="mt-3 hidden gap-2 sm:flex">
+        <Button
+          variant="secondary"
+          fullWidth
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpen();
+          }}
+        >
           Abrir torneo
         </Button>
-        <Button variant="danger" onClick={onDelete} className="px-3.5 text-xs">
+        <Button
+          variant="danger"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          className="px-3.5 text-xs"
+        >
           Eliminar
         </Button>
       </div>
