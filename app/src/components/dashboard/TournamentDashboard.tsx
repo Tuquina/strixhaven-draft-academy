@@ -4,11 +4,12 @@ import type { CreateTournamentInput, SyncStatus } from "../../hooks/useTournamen
 import { calculateStandings } from "../../lib/standings";
 import { FAN_CONTENT_NOTICE } from "../../lib/legal";
 import { STATUS_LABELS } from "../../lib/format";
-import { GAME_FORMAT_LABELS } from "../../lib/gameFormats";
+import { ALL_GAME_FORMATS, GAME_FORMAT_LABELS } from "../../lib/gameFormats";
 import {
   BTN_CTA,
   BTN_GLASS,
   BTN_GLASS_MUTED,
+  filterChipClass,
   GRADIENT_TEXT_GOLD,
   GRADIENT_TEXT_HERO,
   GRADIENT_TEXT_PARCHMENT,
@@ -18,6 +19,7 @@ import {
 } from "../../lib/designSystem";
 import { TournamentCard } from "./TournamentCard";
 import { CreateTournamentModal } from "./CreateTournamentModal";
+import { GlobalLeaderboard } from "./GlobalLeaderboard";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
 import { EmptyState } from "../shared/EmptyState";
 import { MatchTimerModal } from "../shared/MatchTimerModal";
@@ -59,12 +61,6 @@ const SECTIONS: {
 ];
 
 const ALL_STATUSES: TournamentStatus[] = ["active", "drafting", "finished"];
-const ALL_FORMATS: GameFormat[] = ["draft", "standard", "pioneer", "brawl", "commander"];
-
-const chipClass = (active: boolean) =>
-  `cursor-pointer rounded-lg border px-3 py-1.5 font-sans text-xs font-semibold whitespace-nowrap ${
-    active ? "border-gold bg-gold/12 text-gold" : "border-white/12 bg-transparent text-parchment/45"
-  }`;
 
 export function TournamentDashboard({
   tournaments,
@@ -210,11 +206,11 @@ export function TournamentDashboard({
                     Estado
                   </p>
                   <div className="flex flex-wrap gap-1.5">
-                    <button className={chipClass(statusFilter === "all")} onClick={() => setStatusFilter("all")}>
+                    <button className={filterChipClass(statusFilter === "all")} onClick={() => setStatusFilter("all")}>
                       Todos
                     </button>
                     {ALL_STATUSES.map((s) => (
-                      <button key={s} className={chipClass(statusFilter === s)} onClick={() => setStatusFilter(s)}>
+                      <button key={s} className={filterChipClass(statusFilter === s)} onClick={() => setStatusFilter(s)}>
                         {STATUS_LABELS[s]}
                       </button>
                     ))}
@@ -225,11 +221,11 @@ export function TournamentDashboard({
                     Tipo de torneo
                   </p>
                   <div className="flex flex-wrap gap-1.5">
-                    <button className={chipClass(formatFilter === "all")} onClick={() => setFormatFilter("all")}>
+                    <button className={filterChipClass(formatFilter === "all")} onClick={() => setFormatFilter("all")}>
                       Todos
                     </button>
-                    {ALL_FORMATS.map((f) => (
-                      <button key={f} className={chipClass(formatFilter === f)} onClick={() => setFormatFilter(f)}>
+                    {ALL_GAME_FORMATS.map((f) => (
+                      <button key={f} className={filterChipClass(formatFilter === f)} onClick={() => setFormatFilter(f)}>
                         {GAME_FORMAT_LABELS[f]}
                       </button>
                     ))}
@@ -310,6 +306,8 @@ export function TournamentDashboard({
             ))}
           </div>
         </div>
+
+        <GlobalLeaderboard tournaments={tournaments} />
       </main>
 
       <footer className="border-t border-gold/8 px-5 py-8 text-center">

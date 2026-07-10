@@ -49,6 +49,12 @@ export const PANEL_GOLD = "rounded-xl border border-gold/25 bg-gold/10 backdrop-
 export const NOTE_VERDANT =
   "rounded-lg border border-verdant/15 bg-verdant/6 font-sans text-xs leading-relaxed text-verdant-light/80";
 
+/** Toggle chip for filter/sort pickers (search filters, leaderboard sort). */
+export const filterChipClass = (active: boolean) =>
+  `cursor-pointer rounded-lg border px-3 py-1.5 font-sans text-xs font-semibold whitespace-nowrap transition-colors ${
+    active ? "border-gold bg-gold/12 text-gold" : "border-white/12 bg-transparent text-parchment/45 hover:border-white/25"
+  }`;
+
 /* ------------------------------------------------------------------ */
 /* Headings                                                            */
 /* ------------------------------------------------------------------ */

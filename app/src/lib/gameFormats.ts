@@ -10,6 +10,8 @@ export const GAME_FORMAT_LABELS: Record<GameFormat, string> = {
   commander: "Commander",
 };
 
+export const ALL_GAME_FORMATS: GameFormat[] = ["draft", "standard", "pioneer", "brawl", "commander"];
+
 // No entry for "draft" — it has its own in-app "Reglas del Draft" page instead of
 // linking out.
 export const GAME_FORMAT_RULES_URL: Partial<Record<GameFormat, string>> = {
