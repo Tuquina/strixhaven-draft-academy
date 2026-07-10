@@ -12,6 +12,7 @@ import {
   pushTournament,
 } from "../lib/cloudSync";
 import type {
+  DeckCard,
   GameFormat,
   ManaColor,
   MatchFormat,
@@ -35,6 +36,8 @@ export interface PlayerFormInput {
   name: string;
   colors: ManaColor[];
   notes: string;
+  deckName: string;
+  deck: DeckCard[];
 }
 
 export function useTournaments() {
@@ -124,6 +127,9 @@ export function useTournaments() {
     (tournamentId: string, form: PlayerFormInput) => {
       const name = form.name.trim();
       if (!name) return;
+      const deckName = form.deckName.trim() || undefined;
+      const deck = form.deck.length > 0 ? form.deck : undefined;
+
       updateTournament(tournamentId, (t) => {
         const combo = getColorCombo(form.colors, t.gameFormat === "draft");
         if (form.editingId) {
@@ -138,6 +144,8 @@ export function useTournaments() {
                     colorCombinationName: combo.name,
                     strixhavenCollegeName: combo.college,
                     deckNotes: form.notes.trim(),
+                    deckName,
+                    deck,
                   }
                 : p
             ),
@@ -154,6 +162,8 @@ export function useTournaments() {
               colorCombinationName: combo.name,
               strixhavenCollegeName: combo.college,
               deckNotes: form.notes.trim(),
+              deckName,
+              deck,
               createdAt: new Date().toISOString(),
             },
           ],

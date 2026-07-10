@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ManaColor, Tournament } from "../../types";
 import type { PlayerFormInput } from "../../hooks/useTournaments";
 import { getColorCombo } from "../../lib/colors";
+import { formatDeckList, parseDeckList } from "../../lib/decklist";
 import { playerCountMessage } from "../../lib/format";
 import { NOTE_VERDANT } from "../../lib/designSystem";
 import { DEFAULT_COMMANDER_ROUNDS, DEFAULT_POD_SIZE, distributePodSizes, isMultiplayerFormat, MIN_POD_SIZE } from "../../lib/gameFormats";
 import { PlayerForm } from "./PlayerForm";
 import { PlayerCard } from "./PlayerCard";
+import { DeckViewerModal } from "./DeckViewerModal";
 import { Button } from "../shared/Button";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
 
-const EMPTY_FORM: PlayerFormInput = { editingId: null, name: "", colors: [], notes: "" };
+const EMPTY_FORM: PlayerFormInput = { editingId: null, name: "", colors: [], notes: "", deckName: "", deck: [] };
 
 interface PlayerRosterProps {
   tournament: Tournament;
@@ -34,6 +36,8 @@ export function PlayerRoster({
   notify,
 }: PlayerRosterProps) {
   const [form, setForm] = useState<PlayerFormInput>(EMPTY_FORM);
+  const [deckListText, setDeckListText] = useState("");
+  const [deckViewerPlayerId, setDeckViewerPlayerId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [roundsCount, setRoundsCount] = useState(DEFAULT_COMMANDER_ROUNDS);
 
@@ -44,6 +48,8 @@ export function PlayerRoster({
   const commanderHint = isCommander && playerCount >= MIN_POD_SIZE ? podSizeHint(playerCount) : "";
   const canGenerate = isCommander ? playerCount >= MIN_POD_SIZE : playerCount >= 2;
   const formCombo = getColorCombo(form.colors, tournament.gameFormat === "draft");
+  const parsedDeck = useMemo(() => parseDeckList(deckListText), [deckListText]);
+  const deckViewerPlayer = deckViewerPlayerId ? tournament.players.find((p) => p.id === deckViewerPlayerId) : null;
 
   const toggleColor = (c: ManaColor) => {
     setForm((f) => ({
@@ -52,10 +58,15 @@ export function PlayerRoster({
     }));
   };
 
-  const handleSave = () => {
-    onAddOrUpdatePlayer(form);
-    notify(form.editingId ? "Jugador actualizado" : "Jugador agregado");
+  const resetForm = () => {
     setForm(EMPTY_FORM);
+    setDeckListText("");
+  };
+
+  const handleSave = () => {
+    onAddOrUpdatePlayer({ ...form, deck: parsedDeck.cards });
+    notify(form.editingId ? "Jugador actualizado" : "Jugador agregado");
+    resetForm();
   };
 
   return (
@@ -71,11 +82,17 @@ export function PlayerRoster({
           notes={form.notes}
           comboName={formCombo.name}
           isEditing={!!form.editingId}
+          deckName={form.deckName}
+          deckListText={deckListText}
+          deckCardCount={parsedDeck.cards.reduce((s, c) => s + c.quantity, 0)}
+          deckWarnings={parsedDeck.warnings}
           onNameChange={(name) => setForm((f) => ({ ...f, name }))}
           onToggleColor={toggleColor}
           onNotesChange={(notes) => setForm((f) => ({ ...f, notes }))}
+          onDeckNameChange={(deckName) => setForm((f) => ({ ...f, deckName }))}
+          onDeckListTextChange={setDeckListText}
           onSave={handleSave}
-          onCancel={() => setForm(EMPTY_FORM)}
+          onCancel={resetForm}
         />
       )}
 
@@ -91,10 +108,19 @@ export function PlayerRoster({
           player={player}
           comboName={player.colorCombinationName}
           canEdit={canEdit}
-          onEdit={() =>
-            setForm({ editingId: player.id, name: player.name, colors: [...player.colors], notes: player.deckNotes || "" })
-          }
+          onEdit={() => {
+            setForm({
+              editingId: player.id,
+              name: player.name,
+              colors: [...player.colors],
+              notes: player.deckNotes || "",
+              deckName: player.deckName || "",
+              deck: player.deck || [],
+            });
+            setDeckListText(player.deck ? formatDeckList(player.deck) : "");
+          }}
           onRemove={() => setDeleteConfirmId(player.id)}
+          onViewDeck={player.deck && player.deck.length > 0 ? () => setDeckViewerPlayerId(player.id) : undefined}
         />
       ))}
 
@@ -142,6 +168,15 @@ export function PlayerRoster({
             notify("Jugador eliminado — regenerá el fixture");
             setDeleteConfirmId(null);
           }}
+        />
+      )}
+
+      {deckViewerPlayer && (
+        <DeckViewerModal
+          deckName={deckViewerPlayer.deckName}
+          playerName={deckViewerPlayer.name}
+          cards={deckViewerPlayer.deck ?? []}
+          onClose={() => setDeckViewerPlayerId(null)}
         />
       )}
     </div>

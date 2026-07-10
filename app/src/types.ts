@@ -26,6 +26,22 @@ export interface PodResult {
   isDraw: boolean;
 }
 
+/**
+ * A single decklist line as pasted by the user. Only the reference (name +
+ * optional exact printing) is persisted — no Scryfall data is stored on the
+ * tournament itself, since that's resolved live (and cached) by lib/scryfall.ts
+ * whenever the deck is actually viewed. Keeps tournament JSON small and the
+ * deck data always fresh.
+ */
+export interface DeckCard {
+  quantity: number;
+  name: string;
+  /** Set code, e.g. "TDC" — present when the pasted line included one (e.g. Moxfield exports). */
+  set?: string;
+  collectorNumber?: string;
+  section: "mainboard" | "sideboard";
+}
+
 export interface Player {
   id: string;
   name: string;
@@ -33,6 +49,8 @@ export interface Player {
   colorCombinationName: string;
   strixhavenCollegeName?: string | null;
   deckNotes?: string;
+  deckName?: string;
+  deck?: DeckCard[];
   createdAt: string;
 }
 

@@ -7,12 +7,16 @@
 // Scryfall at all.
 //
 // Design follows project/scryfall-mtg-card-api-guide.md: prefer /cards/collection for
-// bulk decklists (not needed here — this is a single-card lookup tool), dedupe/cache
+// bulk decklists (used by resolveDeckCards, below, for player decklists), dedupe/cache
 // aggressively, and handle 429 with backoff.
+
+import type { DeckCard } from "../types";
 
 const AUTOCOMPLETE_URL = "https://api.scryfall.com/cards/autocomplete";
 const NAMED_URL = "https://api.scryfall.com/cards/named";
 const SEARCH_URL = "https://api.scryfall.com/cards/search";
+const COLLECTION_URL = "https://api.scryfall.com/cards/collection";
+const COLLECTION_BATCH_SIZE = 75; // Scryfall's hard limit per /cards/collection request
 
 const CACHE_KEY = "sda-scryfall-cache-v1";
 const CACHE_TTL_MS = 14 * 24 * 60 * 60 * 1000; // 14 days — cards rarely change, per the guide's 7-30 day recommendation
@@ -179,12 +183,12 @@ const FORMAT_ORDER: { key: string; label: string }[] = [
 ];
 
 // Retries a Scryfall request on 429, per the guide's backoff schedule.
-async function scryfallFetch(url: string): Promise<Response> {
+async function scryfallFetch(url: string, init?: RequestInit): Promise<Response> {
   const delaysMs = [0, 500, 1500, 3000];
   let response: Response | null = null;
   for (const delay of delaysMs) {
     if (delay) await new Promise((resolve) => setTimeout(resolve, delay));
-    response = await fetch(url, { headers: { Accept: "application/json" } });
+    response = await fetch(url, { ...init, headers: { Accept: "application/json", ...init?.headers } });
     if (response.status !== 429) return response;
   }
   return response!;
@@ -261,16 +265,31 @@ function writeCacheStore(store: CacheStore): void {
   }
 }
 
-function readCache(name: string): NormalizedCard | null {
-  const entry = readCacheStore()[normalizeKey(name)];
+// Set+collector-number lookups (an exact printing, e.g. Moxfield's "(TDC) 161")
+// get their own cache key so they don't collide with — or get shadowed by — a
+// plain name-based lookup of the same card.
+function printingKey(set: string, collectorNumber: string): string {
+  return `#${set.trim().toLowerCase()}:${collectorNumber.trim().toLowerCase()}`;
+}
+
+function readCacheByKey(key: string): NormalizedCard | null {
+  const entry = readCacheStore()[key];
   if (!entry || Date.now() - entry.cachedAt > CACHE_TTL_MS) return null;
   return entry.card;
 }
 
-function writeCache(name: string, card: NormalizedCard): void {
+function writeCacheByKey(key: string, card: NormalizedCard): void {
   const store = readCacheStore();
-  store[normalizeKey(name)] = { card, cachedAt: Date.now() };
+  store[key] = { card, cachedAt: Date.now() };
   writeCacheStore(store);
+}
+
+function readCache(name: string): NormalizedCard | null {
+  return readCacheByKey(normalizeKey(name));
+}
+
+function writeCache(name: string, card: NormalizedCard): void {
+  writeCacheByKey(normalizeKey(name), card);
 }
 
 /** Lightweight as-you-type suggestions. Cheap enough to call on every debounced keystroke. */
@@ -358,4 +377,85 @@ export async function fetchCardByName(rawName: string): Promise<NormalizedCard> 
   const card = (await enResponse.json()) as ScryfallCard;
   const normalized = normalizeCard(card, false);
   return cacheAndReturn(name, normalized);
+}
+
+interface ScryfallCollectionIdentifier {
+  name?: string;
+  set?: string;
+  collector_number?: string;
+}
+
+interface ScryfallCollectionResponse {
+  object: "list";
+  data: ScryfallCard[];
+  not_found: ScryfallCollectionIdentifier[];
+}
+
+/** A pasted decklist line plus whatever Scryfall resolved for it (`card` is null if not found). */
+export interface ResolvedDeckCard extends DeckCard {
+  card: NormalizedCard | null;
+}
+
+async function fetchCollection(identifiers: ScryfallCollectionIdentifier[]): Promise<ScryfallCollectionResponse> {
+  const response = await scryfallFetch(COLLECTION_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ identifiers }),
+  });
+  if (!response.ok) throw new Error(`Scryfall respondió con error ${response.status}.`);
+  return response.json() as Promise<ScryfallCollectionResponse>;
+}
+
+/**
+ * Resolves a whole decklist against Scryfall in as few requests as possible —
+ * cache first, then POST /cards/collection (batches of 75, Scryfall's max) for
+ * whatever's missing. Uses {set, collector_number} when the pasted line pinned
+ * an exact printing (e.g. Moxfield's "(TDC) 161"), {name} otherwise. Cards
+ * Scryfall can't find come back with `card: null` so the UI can still list them
+ * instead of dropping them silently.
+ */
+export async function resolveDeckCards(cards: DeckCard[]): Promise<ResolvedDeckCard[]> {
+  const results: ResolvedDeckCard[] = new Array(cards.length);
+  const pending: { index: number; identifier: ScryfallCollectionIdentifier; cacheKey: string }[] = [];
+
+  cards.forEach((c, index) => {
+    const cacheKey = c.set && c.collectorNumber ? printingKey(c.set, c.collectorNumber) : normalizeKey(c.name);
+    const cached = readCacheByKey(cacheKey);
+    if (cached) {
+      results[index] = { ...c, card: cached };
+      return;
+    }
+    const identifier: ScryfallCollectionIdentifier =
+      c.set && c.collectorNumber ? { set: c.set.toLowerCase(), collector_number: c.collectorNumber } : { name: c.name };
+    pending.push({ index, identifier, cacheKey });
+  });
+
+  for (let i = 0; i < pending.length; i += COLLECTION_BATCH_SIZE) {
+    const batch = pending.slice(i, i + COLLECTION_BATCH_SIZE);
+    const response = await fetchCollection(batch.map((b) => b.identifier));
+
+    const foundByName = new Map<string, ScryfallCard>();
+    const foundByPrinting = new Map<string, ScryfallCard>();
+    response.data.forEach((raw) => {
+      foundByName.set(normalizeKey(raw.name), raw);
+      if (raw.set && raw.collector_number) foundByPrinting.set(printingKey(raw.set, raw.collector_number), raw);
+    });
+
+    batch.forEach(({ index, identifier, cacheKey }) => {
+      const raw =
+        (identifier.set && identifier.collector_number && foundByPrinting.get(printingKey(identifier.set, identifier.collector_number))) ||
+        (identifier.name && foundByName.get(normalizeKey(identifier.name)));
+
+      if (!raw) {
+        results[index] = { ...cards[index], card: null };
+        return;
+      }
+      const normalized = normalizeCard(raw, false);
+      writeCacheByKey(cacheKey, normalized);
+      writeCacheByKey(normalizeKey(normalized.name), normalized);
+      results[index] = { ...cards[index], card: normalized };
+    });
+  }
+
+  return results;
 }

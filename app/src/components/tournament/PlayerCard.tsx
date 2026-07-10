@@ -8,9 +8,10 @@ interface PlayerCardProps {
   canEdit: boolean;
   onEdit: () => void;
   onRemove: () => void;
+  onViewDeck?: () => void;
 }
 
-export function PlayerCard({ player, comboName, canEdit, onEdit, onRemove }: PlayerCardProps) {
+export function PlayerCard({ player, comboName, canEdit, onEdit, onRemove, onViewDeck }: PlayerCardProps) {
   const theme = player.strixhavenCollegeName
     ? COLLEGE_THEMES[player.strixhavenCollegeName as keyof typeof COLLEGE_THEMES]
     : null;
@@ -64,6 +65,14 @@ export function PlayerCard({ player, comboName, canEdit, onEdit, onRemove }: Pla
         <div className="mt-1.5 font-body text-xs leading-relaxed text-parchment/35 italic">
           {player.deckNotes}
         </div>
+      )}
+      {onViewDeck && (
+        <button
+          onClick={onViewDeck}
+          className="mt-2 cursor-pointer rounded border border-gold/25 bg-gold/8 px-2.5 py-1.5 font-sans text-[11px] font-semibold text-gold hover:bg-gold/14"
+        >
+          🃏 Ver mazo{player.deck ? ` (${player.deck.reduce((s, c) => s + c.quantity, 0)})` : ""}
+        </button>
       )}
     </div>
   );
